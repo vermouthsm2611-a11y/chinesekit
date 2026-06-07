@@ -1,0 +1,19 @@
+# deps
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# env — KHÔNG commit key lên git
+.env
+.env.local
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

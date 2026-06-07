@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* ── Base ─────────────────────────────────────────── */
+:root {
+  --accent: #E24B4A;
+  --accent-hover: #C83C3B;
+  --sidebar-w: 220px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #F7F7F5;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar nhỏ gọn ────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d1ce; border-radius: 2px; }
+
+/* ── Typography helper ────────────────────────────── */
+.hanzi {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ── Card ─────────────────────────────────────────── */
+.card {
+  @apply bg-white rounded-xl border border-gray-100 p-5;
+}
+
+/* ── Badge ────────────────────────────────────────── */
+.badge {
+  @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full;
+}
+.badge-vocab   { @apply bg-blue-50 text-blue-700; }
+.badge-pattern { @apply bg-orange-50 text-orange-700; }
+.badge-song    { @apply bg-green-50 text-green-700; }
+
+/* ── Button ───────────────────────────────────────── */
+.btn {
+  @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 text-sm
+         border border-gray-200 rounded-lg bg-white text-gray-700
+         hover:bg-gray-50 transition-colors cursor-pointer;
+}
+.btn-primary {
+  @apply bg-[#E24B4A] border-[#E24B4A] text-white hover:bg-[#C83C3B];
+}
+
+/* ── Input ────────────────────────────────────────── */
+.input {
+  @apply w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white
+         outline-none focus:border-[#E24B4A] transition-colors;
+}
