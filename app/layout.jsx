@@ -5,6 +5,7 @@ import BottomNav from '@/components/BottomNav'
 export const metadata = {
   title: 'ChineseKit',
   description: 'Personal Chinese learning app',
+  icons: { icon: '/favicon.png' },
 }
 
 export default function RootLayout({ children }) {

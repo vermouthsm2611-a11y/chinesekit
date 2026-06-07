@@ -35,8 +35,8 @@ export default function Sidebar() {
   return (
     <aside className="hidden md:flex fixed top-0 left-0 h-screen w-[220px] bg-white border-r border-gray-100 flex-col z-40">
       {/* Logo */}
-      <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
-        <span className="text-[#E24B4A] text-xl">汉</span>
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
+        <img src="/slidebar.png" alt="ChineseKit" className="w-9 h-9 object-contain" />
         <span className="font-medium text-[15px]">ChineseKit</span>
       </div>
 
