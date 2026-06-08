@@ -1,15 +1,23 @@
 'use client'
 
-import { useFormStatus } from 'react-dom'
-import { useState, useRef } from 'react'
+import { useFormStatus, useFormState } from 'react-dom'
+import { useState, useRef, useEffect } from 'react'
+import Toast from '@/components/ui/Toast'
 
 export default function AddSongForm({ action }) {
+  const [state, formAction] = useFormState(action, null)
+  const [toastMsg, setToastMsg] = useState('')
+
   const [hanziText, setHanziText] = useState('')
   const [vietText,  setVietText]  = useState('')
   const [translating, setTranslating] = useState(false)
   const [transErr, setTransErr] = useState('')
 
   const vietRef = useRef(null)
+
+  useEffect(() => {
+    if (state?.error) setToastMsg(state.error)
+  }, [state])
 
   const countLines = (text) => text.split('\n').filter(l => l.trim()).length
   const hanziLines = countLines(hanziText)
@@ -52,7 +60,9 @@ export default function AddSongForm({ action }) {
   }
 
   return (
-    <form action={action} className="card max-w-3xl flex flex-col gap-5">
+    <>
+    <Toast message={toastMsg} type="error" onClose={() => setToastMsg('')} />
+    <form action={formAction} className="card max-w-3xl flex flex-col gap-5">
 
       {/* Thông tin bài hát */}
       <div className="grid grid-cols-2 gap-4">
@@ -154,6 +164,7 @@ export default function AddSongForm({ action }) {
         <SubmitButton />
       </div>
     </form>
+    </>
   )
 }
 

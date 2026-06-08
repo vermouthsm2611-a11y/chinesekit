@@ -39,13 +39,16 @@ export default function PatternList({ patterns }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <input
-        type="text"
-        placeholder="Tìm cấu trúc, nghĩa, ví dụ..."
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        className="input max-w-sm"
-      />
+      {/* sticky: search bar bám đầu viewport khi scroll qua list accordion dài */}
+      <div className="sticky top-0 z-10 bg-[#F7F7F5] pb-2">
+        <input
+          type="text"
+          placeholder="Tìm cấu trúc, nghĩa, ví dụ..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="input max-w-sm"
+        />
+      </div>
 
       {filtered.length === 0 ? (
         <p className="text-[13px] text-gray-400 mt-4">Không tìm thấy kết quả nào.</p>

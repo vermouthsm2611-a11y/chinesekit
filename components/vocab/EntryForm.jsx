@@ -4,15 +4,26 @@
 // Auto-fill: nút ⚡ Load → pinyin-pro + Google Translate
 // Examples: dynamic list, mỗi item { hanzi, pinyin, vi }, submit qua hidden JSON input
 
-import { useFormStatus } from 'react-dom'
+import { useFormStatus, useFormState } from 'react-dom'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Toast from '@/components/ui/Toast'
 
 const EMPTY_EXAMPLE = { hanzi: '', pinyin: '', vi: '' }
 
 export default function EntryForm({ action, initial, back }) {
   const isEdit     = !!initial
   const searchParams = useSearchParams()
+
+  // useFormState: bắt giá trị return từ Server Action ({ error } | null)
+  // action phải có signature (prevState, formData) — xem entries.js
+  const [state, formAction] = useFormState(action, null)
+  const [toastMsg, setToastMsg] = useState('')
+
+  // Khi Server Action trả về { error }, hiện toast
+  useEffect(() => {
+    if (state?.error) setToastMsg(state.error)
+  }, [state])
 
   // ── Core fields ───────────────────────────────────────────────────────────
   const [typeVal,   setTypeVal]   = useState(initial?.type       ?? 'vocab')
@@ -67,7 +78,13 @@ export default function EntryForm({ action, initial, back }) {
                       outline-none focus:border-[#E24B4A] transition-colors`
 
   return (
-    <form action={action} className="card max-w-2xl flex flex-col gap-4">
+    <>
+      <Toast
+        message={toastMsg}
+        type="error"
+        onClose={() => setToastMsg('')}
+      />
+    <form action={formAction} className="card max-w-2xl flex flex-col gap-4">
       {/* Truyền back URL xuống Server Action để redirect đúng sau save */}
       {back && <input type="hidden" name="back" value={back} />}
 
@@ -226,6 +243,7 @@ export default function EntryForm({ action, initial, back }) {
         <SubmitButton isEdit={isEdit} />
       </div>
     </form>
+    </>
   )
 }
 

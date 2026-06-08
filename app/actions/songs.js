@@ -7,14 +7,14 @@ import { supabase } from '@/lib/supabase'
 // ── Thêm bài hát + lyrics ────────────────────────────────────────────────────
 // lyricsRaw   — lyrics tiếng Trung, mỗi dòng 1 câu
 // vietsubRaw  — vietsub, số dòng phải khớp với lyricsRaw
-export async function addSong(formData) {
+export async function addSong(prevState, formData) {
   const title      = formData.get('title')?.trim()
   const artist     = formData.get('artist')?.trim()    || null
   const youtubeUrl = formData.get('youtube_url')?.trim() || null
   const lyricsRaw  = formData.get('lyrics')?.trim()    || ''
   const vietsubRaw = formData.get('vietsub')?.trim()   || ''
 
-  if (!title) throw new Error('Thiếu tên bài hát')
+  if (!title) return { error: 'Tên bài hát là bắt buộc.' }
 
   // Parse: split theo newline, bỏ dòng trắng
   const hanziLines  = lyricsRaw.split('\n').map(l => l.trim()).filter(Boolean)
@@ -27,7 +27,7 @@ export async function addSong(formData) {
     .select('id')
     .single()
 
-  if (songErr) throw new Error(songErr.message)
+  if (songErr) return { error: `Lỗi database: ${songErr.message}` }
 
   // Insert từng dòng lyrics
   if (hanziLines.length > 0) {
@@ -39,22 +39,23 @@ export async function addSong(formData) {
     }))
 
     const { error: lineErr } = await supabase.from('song_lines').insert(lines)
-    if (lineErr) throw new Error(lineErr.message)
+    if (lineErr) return { error: `Lỗi lưu lyrics: ${lineErr.message}` }
   }
 
-  revalidatePath('/', 'layout')
+  revalidatePath('/lyrics')
+  revalidatePath('/')           // dashboard: songs widget
   redirect(`/lyrics/${song.id}`)
 }
 
 // ── Cập nhật bài hát + vietsub ───────────────────────────────────────────────
 // Chỉ update metadata + vietsub — hanzi giữ nguyên, không cho sửa để tránh lệch dòng
-export async function updateSong(id, formData) {
+export async function updateSong(id, prevState, formData) {
   const title      = formData.get('title')?.trim()
   const artist     = formData.get('artist')?.trim()      || null
   const youtubeUrl = formData.get('youtube_url')?.trim() || null
   const vietsubRaw = formData.get('vietsub')?.trim()     || ''
 
-  if (!title) throw new Error('Thiếu tên bài hát')
+  if (!title) return { error: 'Tên bài hát là bắt buộc.' }
 
   // Update song metadata
   const { error: songErr } = await supabase
@@ -62,7 +63,7 @@ export async function updateSong(id, formData) {
     .update({ title, artist, youtube_url: youtubeUrl })
     .eq('id', id)
 
-  if (songErr) throw new Error(songErr.message)
+  if (songErr) return { error: `Lỗi database: ${songErr.message}` }
 
   // Lấy danh sách line_id theo thứ tự để map vietsub
   const { data: lines, error: fetchErr } = await supabase
@@ -71,7 +72,7 @@ export async function updateSong(id, formData) {
     .eq('song_id', id)
     .order('line_order')
 
-  if (fetchErr) throw new Error(fetchErr.message)
+  if (fetchErr) return { error: `Lỗi tải lyrics: ${fetchErr.message}` }
 
   // Parse vietsub mới — giữ dòng trắng để mapping đúng vị trí
   const vietLines = vietsubRaw.split('\n').map(l => l.trim())
@@ -89,11 +90,12 @@ export async function updateSong(id, formData) {
       .from('song_lines')
       .upsert(updates, { onConflict: 'id' })
 
-    if (updateErr) throw new Error(updateErr.message)
+    if (updateErr) return { error: `Lỗi lưu vietsub: ${updateErr.message}` }
   }
 
   revalidatePath(`/lyrics/${id}`)
   revalidatePath('/lyrics')
+  revalidatePath('/')           // dashboard: songs widget cần updated title/artist
   redirect(`/lyrics/${id}`)
 }
 
@@ -102,6 +104,7 @@ export async function deleteSong(id) {
   const { error } = await supabase.from('songs').delete().eq('id', id)
   if (error) throw new Error(error.message)
 
-  revalidatePath('/', 'layout')
+  revalidatePath('/lyrics')
+  revalidatePath('/')           // dashboard: songs widget
   redirect('/lyrics')
 }

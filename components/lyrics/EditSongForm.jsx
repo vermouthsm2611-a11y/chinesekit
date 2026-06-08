@@ -4,22 +4,32 @@
 // Hanzi giữ nguyên (hiển thị read-only để tham chiếu)
 // Vietsub: bulk textarea, mỗi dòng map 1-1 với hanzi
 
-import { useFormStatus } from 'react-dom'
-import { useState } from 'react'
+import { useFormStatus, useFormState } from 'react-dom'
+import { useState, useEffect } from 'react'
+import Toast from '@/components/ui/Toast'
 
 export default function EditSongForm({ song, lines, action }) {
+  const [state, formAction] = useFormState(action, null)
+  const [toastMsg, setToastMsg] = useState('')
+
   // Gộp vietsub hiện tại thành 1 textarea (giữ dòng trắng để mapping đúng)
   const initialVietsub = lines.map(l => l.vietsub ?? '').join('\n')
   const [vietText, setVietText] = useState(initialVietsub)
+
+  useEffect(() => {
+    if (state?.error) setToastMsg(state.error)
+  }, [state])
 
   const vietLines  = vietText.split('\n').length
   const mismatch   = lines.length > 0 && vietLines !== lines.length
 
   return (
+    <>
+    <Toast message={toastMsg} type="error" onClose={() => setToastMsg('')} />
     <div className="flex flex-col gap-5 max-w-3xl">
 
       {/* Metadata */}
-      <form action={action} className="card flex flex-col gap-4">
+      <form action={formAction} className="card flex flex-col gap-4">
         <p className="text-[13px] font-medium text-gray-700 mb-1">Thông tin bài hát</p>
 
         <div className="grid grid-cols-2 gap-4">
@@ -92,6 +102,7 @@ export default function EditSongForm({ song, lines, action }) {
         </div>
       </form>
     </div>
+    </>
   )
 }
 

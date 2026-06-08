@@ -17,7 +17,7 @@ function parseExamples(formData) {
   } catch { return [] }
 }
 
-export async function addEntry(formData) {
+export async function addEntry(prevState, formData) {
   const payload = {
     type:       formData.get('type')       || 'vocab',
     hanzi:      formData.get('hanzi')?.trim(),
@@ -30,22 +30,23 @@ export async function addEntry(formData) {
     examples:   parseExamples(formData),
   }
 
-  // Validate tối thiểu
-  if (!payload.hanzi || !payload.meaning_vi) {
-    throw new Error('Hanzi và nghĩa tiếng Việt là bắt buộc')
-  }
+  // Validate — trả về error thay vì throw để client hiện toast thay vì error overlay
+  if (!payload.hanzi)      return { error: 'Hanzi là bắt buộc.' }
+  if (!payload.meaning_vi) return { error: 'Nghĩa tiếng Việt là bắt buộc.' }
 
   const { error } = await supabase.from('entries').insert(payload)
-  if (error) throw new Error(error.message)
+  if (error) return { error: `Lỗi database: ${error.message}` }
 
-  revalidatePath('/', 'layout')
+  revalidatePath('/vocab')
+  revalidatePath('/patterns')
+  revalidatePath('/')
 
   const back = formData.get('back')
   redirect(back && back.startsWith('/') ? back : '/vocab')
 }
 
 // ── Cập nhật entry ───────────────────────────────────────────────────────────
-export async function updateEntry(id, formData) {
+export async function updateEntry(id, prevState, formData) {
   const payload = {
     type:       formData.get('type'),
     hanzi:      formData.get('hanzi')?.trim(),
@@ -58,10 +59,17 @@ export async function updateEntry(id, formData) {
     examples:   parseExamples(formData),
   }
 
-  const { error } = await supabase.from('entries').update(payload).eq('id', id)
-  if (error) throw new Error(error.message)
+  if (!payload.hanzi)      return { error: 'Hanzi là bắt buộc.' }
+  if (!payload.meaning_vi) return { error: 'Nghĩa tiếng Việt là bắt buộc.' }
 
-  revalidatePath('/', 'layout')
+  const { error } = await supabase.from('entries').update(payload).eq('id', id)
+  if (error) return { error: `Lỗi database: ${error.message}` }
+
+  // Targeted revalidation — bao gồm cả dynamic segment /vocab/[id]
+  revalidatePath('/vocab')
+  revalidatePath(`/vocab/${id}`)
+  revalidatePath('/patterns')
+  revalidatePath('/')           // dashboard: recent entries
 
   // Trả về đúng trang trước đó (lyrics, patterns, ...) nếu có
   const back = formData.get('back')
@@ -73,6 +81,8 @@ export async function deleteEntry(id) {
   const { error } = await supabase.from('entries').delete().eq('id', id)
   if (error) throw new Error(error.message)
 
-  revalidatePath('/', 'layout')
+  revalidatePath('/vocab')
+  revalidatePath('/patterns')
+  revalidatePath('/')           // dashboard: stat count + recent entries
   redirect('/vocab')
 }

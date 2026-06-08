@@ -75,8 +75,8 @@ export default function LyricsViewer({ lines, initialShowPinyin = false }) {
 
   return (
     <div className="relative">
-      {/* Toggle pinyin */}
-      <div className="flex justify-end mb-4">
+      {/* Toggle pinyin — sticky để accessible khi đọc lyrics dài */}
+      <div className="sticky top-0 z-10 bg-[#F7F7F5] flex justify-end pb-3">
         <button
           type="button"
           onClick={() => setShowPinyin(v => !v)}

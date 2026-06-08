@@ -1,4 +1,8 @@
 // Dashboard — Server Component
+// force-dynamic cần thiết vì dashboard hiển thị: streak (tính theo ngày thực),
+// reviewedToday (thay đổi real-time sau mỗi flashcard session), previewEntry random
+export const dynamic = 'force-dynamic'
+
 import { supabase } from '@/lib/supabase'
 import { getSettings } from '@/lib/settings'
 import Link from 'next/link'

@@ -3,18 +3,28 @@
 import { useFormStatus } from 'react-dom'
 import { useState } from 'react'
 import { clearReviewLog } from '@/app/actions/settings'
+import Toast from '@/components/ui/Toast'
 
 // ── Main form ─────────────────────────────────────────────────────────────────
 export default function SettingsForm({ action, settings }) {
-  const [saved, setSaved] = useState(false)
+  const [saved,     setSaved]     = useState(false)
+  const [toastMsg,  setToastMsg]  = useState('')
 
+  // saveSettings giờ có signature (prevState, formData) nhưng SettingsForm
+  // gọi trực tiếp — truyền null làm prevState
   async function handleSubmit(formData) {
-    await action(formData)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    const result = await action(null, formData)
+    if (result?.error) {
+      setToastMsg(result.error)
+    } else {
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    }
   }
 
   return (
+    <>
+    <Toast message={toastMsg} type="error" onClose={() => setToastMsg('')} />
     <div className="max-w-xl flex flex-col gap-6">
 
       <form action={handleSubmit} className="card flex flex-col gap-5">
@@ -106,6 +116,7 @@ export default function SettingsForm({ action, settings }) {
       {/* Danger zone */}
       <DangerZone />
     </div>
+    </>
   )
 }
 

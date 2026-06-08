@@ -1,5 +1,4 @@
-export const dynamic = 'force-dynamic'
-
+// Không dùng force-dynamic — saveSettings action sẽ revalidate đúng path
 import { getSettings } from '@/lib/settings'
 import { saveSettings } from '@/app/actions/settings'
 import SettingsForm from '@/components/settings/SettingsForm'

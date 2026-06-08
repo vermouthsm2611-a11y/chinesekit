@@ -1,5 +1,4 @@
-export const dynamic = 'force-dynamic'
-
+// Không dùng force-dynamic — targeted revalidation từ actions đủ để keep data fresh
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import PatternList from '@/components/patterns/PatternList'
