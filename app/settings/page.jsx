@@ -8,7 +8,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-gray-900 mb-6">Cài đặt</h1>
+      <h1 className="text-2xl font-medium text-gray-900 mb-6">Cài đặt</h1>
       <SettingsForm action={saveSettings} settings={settings} />
     </div>
   )

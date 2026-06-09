@@ -59,6 +59,6 @@ body {
 
 /* ── Input ────────────────────────────────────────── */
 .input {
-  @apply w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white
+  @apply w-full px-3.5 py-2.5 text-[15px] border border-gray-200 rounded-lg bg-white
          outline-none focus:border-[#E24B4A] transition-colors;
 }

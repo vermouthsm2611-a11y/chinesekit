@@ -114,13 +114,13 @@ export default function EntryForm({ action, initial, back }) {
       {/* Hanzi + Load */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <label className="text-[12px] font-medium text-gray-600">Hanzi *</label>
+          <label className="text-[13px] font-medium text-gray-600">Hanzi *</label>
           {!isEdit && (
             <button
               type="button"
               onClick={handleLoad}
               disabled={loading || !hasCJK}
-              className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md
+              className="inline-flex items-center gap-1 text-[12px] px-2 py-0.5 rounded-md
                          border border-gray-200 bg-white text-gray-500
                          hover:border-[#E24B4A] hover:text-[#E24B4A] transition-colors
                          disabled:opacity-40 disabled:cursor-not-allowed"
@@ -140,9 +140,9 @@ export default function EntryForm({ action, initial, back }) {
       {/* Pinyin + HV */}
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-1">
-          <label className="text-[12px] font-medium text-gray-600">
+          <label className="text-[13px] font-medium text-gray-600">
             Pinyin
-            {!isEdit && pinyinVal && <span className="ml-1 text-[10px] text-green-500 font-normal">✓ auto</span>}
+            {!isEdit && pinyinVal && <span className="ml-1 text-[11px] text-green-500 font-normal">✓ auto</span>}
           </label>
           <input type="text" name="pinyin" value={pinyinVal} onChange={e => setPinyinVal(e.target.value)}
             placeholder="hòuhuǐ" className={inputClass} />
@@ -153,9 +153,9 @@ export default function EntryForm({ action, initial, back }) {
       {/* Nghĩa VI + EN */}
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-1">
-          <label className="text-[12px] font-medium text-gray-600">
+          <label className="text-[13px] font-medium text-gray-600">
             Nghĩa tiếng Việt *
-            {!isEdit && meaningVi && <span className="ml-1 text-[10px] text-green-500 font-normal">✓ auto</span>}
+            {!isEdit && meaningVi && <span className="ml-1 text-[11px] text-green-500 font-normal">✓ auto</span>}
           </label>
           <input type="text" name="meaning_vi" value={meaningVi} onChange={e => setMeaningVi(e.target.value)}
             placeholder="hối tiếc" className={inputClass} />
@@ -166,11 +166,11 @@ export default function EntryForm({ action, initial, back }) {
       {/* ── Ví dụ (dynamic) ─────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <p className="text-[12px] font-medium text-gray-600">Ví dụ</p>
+          <p className="text-[13px] font-medium text-gray-600">Ví dụ</p>
           <button
             type="button"
             onClick={addExample}
-            className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg
+            className="inline-flex items-center gap-1 text-[12px] px-2.5 py-1 rounded-lg
                        border border-dashed border-gray-300 text-gray-500
                        hover:border-[#E24B4A] hover:text-[#E24B4A] transition-colors"
           >
@@ -179,17 +179,17 @@ export default function EntryForm({ action, initial, back }) {
         </div>
 
         {examples.length === 0 && (
-          <p className="text-[12px] text-gray-400 italic">Chưa có ví dụ nào. Nhấn "+ Thêm ví dụ" để thêm.</p>
+          <p className="text-[13px] text-gray-400 italic">Chưa có ví dụ nào. Nhấn "+ Thêm ví dụ" để thêm.</p>
         )}
 
         {examples.map((ex, i) => (
           <div key={i} className="border border-gray-100 rounded-xl p-3 flex flex-col gap-2 bg-gray-50/50">
             <div className="flex items-center justify-between mb-0.5">
-              <span className="text-[11px] text-gray-400 font-medium">Ví dụ {i + 1}</span>
+              <span className="text-[12px] text-gray-400 font-medium">Ví dụ {i + 1}</span>
               <button
                 type="button"
                 onClick={() => removeExample(i)}
-                className="text-[11px] text-gray-400 hover:text-red-500 transition-colors px-1"
+                className="text-[12px] text-gray-400 hover:text-red-500 transition-colors px-1"
               >
                 × Xoá
               </button>
@@ -261,7 +261,7 @@ function Field({ label, name, as = 'input', placeholder, defaultValue, children 
                      outline-none focus:border-[#E24B4A] transition-colors`
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-[12px] font-medium text-gray-600">{label}</label>
+      <label className="text-[13px] font-medium text-gray-600">{label}</label>
       {as === 'select' ? (
         <select name={name} defaultValue={defaultValue} className={baseClass}>{children}</select>
       ) : as === 'textarea' ? (

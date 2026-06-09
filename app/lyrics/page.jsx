@@ -11,8 +11,8 @@ export default async function LyricsListPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Lyrics</h1>
-          <p className="text-[13px] text-gray-400 mt-0.5">
+          <h1 className="text-2xl font-medium text-gray-900">Lyrics</h1>
+          <p className="text-[14px] text-gray-400 mt-0.5">
             {songs?.length ?? 0} bài hát
           </p>
         </div>
@@ -43,9 +43,9 @@ export default async function LyricsListPage() {
                 🎵
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[15px] font-medium text-gray-900 truncate">{song.title}</p>
+                <p className="text-[16px] font-medium text-gray-900 truncate">{song.title}</p>
                 {song.artist && (
-                  <p className="text-[13px] text-gray-400 mt-0.5">{song.artist}</p>
+                  <p className="text-[14px] text-gray-400 mt-0.5">{song.artist}</p>
                 )}
               </div>
               <span className="text-gray-300 group-hover:text-gray-500 transition-colors">→</span>

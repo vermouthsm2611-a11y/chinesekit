@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import PinyinText from '@/components/ui/PinyinText'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -140,24 +141,25 @@ export default function FlashcardSession({ entries }) {
           <>
             <p className="text-4xl font-medium">{current.hanzi}</p>
             {current.pinyin && (
-              <p className="text-[14px] text-gray-400">{current.pinyin}
+              <p className="text-[18px]">
+                <PinyinText pinyin={current.pinyin} />
                 {current.hv && <span className="ml-2 text-gray-300">· {current.hv}</span>}
               </p>
             )}
-            <p className="text-[18px] font-medium text-gray-800">{current.meaning_vi}</p>
+            <p className="text-[20px] font-medium text-gray-800">{current.meaning_vi}</p>
             {current.meaning_en && (
-              <p className="text-[13px] text-gray-400 italic">{current.meaning_en}</p>
+              <p className="text-[15px] text-gray-400 italic">{current.meaning_en}</p>
             )}
             {current.example && (
               <div className="w-full mt-2 p-3 bg-gray-50 rounded-xl text-left">
-                <p className="text-[14px] text-gray-700">{current.example}</p>
+                <p className="text-[16px] text-gray-700">{current.example}</p>
                 {current.example_vi && (
-                  <p className="text-[12px] text-gray-400 mt-1">{current.example_vi}</p>
+                  <p className="text-[14px] text-gray-400 mt-1">{current.example_vi}</p>
                 )}
               </div>
             )}
             {current.notes && (
-              <p className="text-[12px] text-gray-400 italic mt-1">{current.notes}</p>
+              <p className="text-[14px] text-gray-400 italic mt-1">{current.notes}</p>
             )}
           </>
         )}

@@ -121,7 +121,7 @@ export default async function StatsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-gray-900 mb-6">Thống kê</h1>
+      <h1 className="text-2xl font-medium text-gray-900 mb-6">Thống kê</h1>
 
       {/* ── Row 1: Summary cards ──────────────────────────────────────────── */}
       <div className="grid grid-cols-4 gap-3 mb-5">
@@ -132,9 +132,9 @@ export default async function StatsPage() {
           { label: 'Tổng lượt ôn',value: totalReviews ?? 0, sub: 'reviews all-time' },
         ].map(({ label, value, sub }) => (
           <div key={label} className="card">
-            <p className="text-[11px] text-gray-400 mb-1">{label}</p>
-            <p className="text-2xl font-medium text-gray-900">{value}</p>
-            <p className="text-[11px] text-gray-400 mt-0.5">{sub}</p>
+            <p className="text-[14px] text-gray-400 mb-2">{label}</p>
+            <p className="text-4xl font-medium text-gray-900">{value}</p>
+            <p className="text-[14px] text-gray-400 mt-1">{sub}</p>
           </div>
         ))}
       </div>
@@ -145,21 +145,21 @@ export default async function StatsPage() {
           <span className="text-3xl">🔥</span>
           <div>
             <p className="text-2xl font-medium text-gray-900">{streak.current} ngày</p>
-            <p className="text-[12px] text-gray-400">Streak hiện tại</p>
+            <p className="text-[13px] text-gray-400">Streak hiện tại</p>
           </div>
         </div>
         <div className="card flex items-center gap-4">
           <span className="text-3xl">🏆</span>
           <div>
             <p className="text-2xl font-medium text-gray-900">{streak.best} ngày</p>
-            <p className="text-[12px] text-gray-400">Streak tốt nhất</p>
+            <p className="text-[13px] text-gray-400">Streak tốt nhất</p>
           </div>
         </div>
       </div>
 
       {/* ── Row 3: Activity chart (14 ngày) ──────────────────────────────── */}
       <div className="card mb-5">
-        <p className="text-[13px] font-medium text-gray-800 mb-4">📅 Hoạt động 14 ngày qua</p>
+        <p className="text-[14px] font-medium text-gray-800 mb-4">📅 Hoạt động 14 ngày qua</p>
         <ActivityChart days={activityDays} />
       </div>
 
@@ -168,7 +168,7 @@ export default async function StatsPage() {
 
         {/* Kết quả ôn tập */}
         <div className="card">
-          <p className="text-[13px] font-medium text-gray-800 mb-4">🎯 Kết quả ôn tập (14 ngày)</p>
+          <p className="text-[14px] font-medium text-gray-800 mb-4">🎯 Kết quả ôn tập (14 ngày)</p>
           {totalRecent === 0 ? (
             <p className="text-[13px] text-gray-400 text-center py-6">Chưa có dữ liệu</p>
           ) : (
@@ -178,7 +178,7 @@ export default async function StatsPage() {
 
         {/* Nguồn học */}
         <div className="card">
-          <p className="text-[13px] font-medium text-gray-800 mb-4">📌 Nguồn học</p>
+          <p className="text-[14px] font-medium text-gray-800 mb-4">📌 Nguồn học</p>
           <div className="flex flex-col gap-3">
             {sources.map(({ label, emoji, count }) => {
               const pct = totalEntries > 0 ? (count / totalEntries) * 100 : 0
@@ -186,7 +186,7 @@ export default async function StatsPage() {
                 <div key={label}>
                   <div className="flex justify-between mb-1">
                     <span className="text-[13px] text-gray-600">{emoji} {label}</span>
-                    <span className="text-[12px] font-medium text-gray-700">{count}</span>
+                    <span className="text-[13px] font-medium text-gray-700">{count}</span>
                   </div>
                   <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                     <div className="h-full bg-[#E24B4A] rounded-full" style={{ width: `${pct}%` }} />
@@ -201,14 +201,14 @@ export default async function StatsPage() {
       {/* ── Row 5: Top reviewed ───────────────────────────────────────────── */}
       {topEntries.length > 0 && (
         <div className="card">
-          <p className="text-[13px] font-medium text-gray-800 mb-4">🔁 Ôn nhiều nhất (gần đây)</p>
+          <p className="text-[14px] font-medium text-gray-800 mb-4">🔁 Ôn nhiều nhất (gần đây)</p>
           <div className="flex flex-col gap-2">
             {topEntries.map((e, i) => (
               <div key={e.id} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
                 <span className="text-[12px] text-gray-300 w-4">{i + 1}</span>
-                <span className="hanzi text-[17px] flex-1">{e.hanzi}</span>
-                <span className="text-[12px] text-gray-500 flex-1">{e.meaning_vi}</span>
-                <span className="text-[12px] font-medium text-gray-400">{e.count}×</span>
+                <span className="hanzi text-[20px] flex-1">{e.hanzi}</span>
+                <span className="text-[14px] text-gray-500 flex-1">{e.meaning_vi}</span>
+                <span className="text-[13px] font-medium text-gray-400">{e.count}×</span>
               </div>
             ))}
           </div>

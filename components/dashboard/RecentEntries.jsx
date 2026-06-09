@@ -20,16 +20,16 @@ export default function RecentEntries({ entries }) {
           {entries.map((entry) => (
             <div key={entry.id} className="flex items-center justify-between py-2.5">
               <div>
-                <p className="hanzi text-[16px]">{entry.hanzi}</p>
+                <p className="hanzi text-[20px]">{entry.hanzi}</p>
                 {entry.pinyin && (
-                  <p className="text-[11px] text-gray-400 mt-0.5">{entry.pinyin}</p>
+                  <p className="text-[13px] text-gray-400 mt-0.5">{entry.pinyin}</p>
                 )}
               </div>
               <div className="flex flex-col items-end gap-1">
                 <span className={`badge ${entry.type === 'vocab' ? 'badge-vocab' : 'badge-pattern'}`}>
                   {entry.type === 'vocab' ? 'từ vựng' : 'cấu trúc'}
                 </span>
-                <p className="text-[12px] text-gray-500 max-w-[140px] text-right truncate">
+                <p className="text-[14px] text-gray-500 max-w-[160px] text-right truncate">
                   {entry.meaning_vi}
                 </p>
               </div>

@@ -33,7 +33,7 @@ export default async function LyricsPage({ params }) {
           </div>
           <h1 className="text-2xl font-medium text-gray-900">{song.title}</h1>
           {song.artist && (
-            <p className="text-[14px] text-gray-400 mt-0.5">{song.artist}</p>
+            <p className="text-[15px] text-gray-400 mt-0.5">{song.artist}</p>
           )}
         </div>
 

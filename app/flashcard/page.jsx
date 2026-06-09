@@ -52,7 +52,7 @@ export default async function FlashcardPage({ searchParams }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-medium text-gray-900">Flashcard</h1>
+        <h1 className="text-2xl font-medium text-gray-900">Flashcard</h1>
         <Link href="/" className="btn">← Dashboard</Link>
       </div>
 
@@ -91,7 +91,7 @@ function SessionFilter({ currentType, currentSource }) {
       <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
         {types.map(([v, l]) => (
           <a key={v} href={buildUrl(v, currentSource)}
-            className={`px-3 py-1 text-[12px] rounded-md transition-colors ${
+            className={`px-3 py-1 text-[13px] rounded-md transition-colors ${
               currentType === v ? 'bg-[#E24B4A] text-white' : 'text-gray-500 hover:bg-gray-100'
             }`}>{l}</a>
         ))}
@@ -99,7 +99,7 @@ function SessionFilter({ currentType, currentSource }) {
       <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
         {sources.map(([v, l]) => (
           <a key={v} href={buildUrl(currentType, v)}
-            className={`px-3 py-1 text-[12px] rounded-md transition-colors ${
+            className={`px-3 py-1 text-[13px] rounded-md transition-colors ${
               currentSource === v ? 'bg-[#E24B4A] text-white' : 'text-gray-500 hover:bg-gray-100'
             }`}>{l}</a>
         ))}

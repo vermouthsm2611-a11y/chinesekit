@@ -1,5 +1,7 @@
 'use client'
 
+import PinyinText from '@/components/ui/PinyinText'
+
 // WordPopup — hiện khi click vào 1 ký tự/từ trong lyrics
 // Props:
 //   char    — ký tự/từ đang xem
@@ -13,9 +15,9 @@ export default function WordPopup({ char, entries, pos, onClose }) {
   const style = {
     position: 'fixed',
     top:  pos.y + 16,
-    left: Math.min(pos.x, window.innerWidth - 280),
+    left: Math.min(pos.x, window.innerWidth - 300),
     zIndex: 50,
-    width: 260,
+    width: 290,
   }
 
   return (
@@ -26,7 +28,7 @@ export default function WordPopup({ char, entries, pos, onClose }) {
       <div style={style} className="card shadow-lg border border-gray-200 z-50 p-0 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
-          <span className="text-2xl font-medium">{char}</span>
+          <span className="text-3xl font-medium">{char}</span>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-lg leading-none">
             ×
           </button>
@@ -49,10 +51,10 @@ export default function WordPopup({ char, entries, pos, onClose }) {
               <div key={entry.id} className="px-4 py-3 border-b border-gray-50 last:border-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   {entry.pinyin && (
-                    <span className="text-[12px] text-gray-400">{entry.pinyin}</span>
+                    <PinyinText pinyin={entry.pinyin} className="text-[15px]" />
                   )}
                   {entry.hv && (
-                    <span className="text-[11px] text-gray-300">· {entry.hv}</span>
+                    <span className="text-[13px] text-gray-300">· {entry.hv}</span>
                   )}
                   <span className={`badge ml-auto text-[10px] ${
                     entry.type === 'vocab' ? 'badge-vocab' : 'badge-pattern'
@@ -60,9 +62,9 @@ export default function WordPopup({ char, entries, pos, onClose }) {
                     {entry.type === 'vocab' ? 'từ vựng' : 'cấu trúc'}
                   </span>
                 </div>
-                <p className="text-[14px] font-medium text-gray-800">{entry.meaning_vi}</p>
+                <p className="text-[16px] font-medium text-gray-800">{entry.meaning_vi}</p>
                 {entry.example && (
-                  <p className="text-[12px] text-gray-400 mt-1 italic">{entry.example}</p>
+                  <p className="text-[13px] text-gray-400 mt-1 italic">{entry.example}</p>
                 )}
                 {/* Sửa → trả về đúng trang hiện tại sau save */}
                 <div className="flex justify-end mt-2">

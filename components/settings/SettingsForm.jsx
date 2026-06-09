@@ -32,7 +32,7 @@ export default function SettingsForm({ action, settings }) {
 
         {/* Daily goal */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-gray-600">
+          <label className="text-[13px] font-medium text-gray-600">
             Mục tiêu ôn tập hàng ngày
           </label>
           <div className="flex items-center gap-3">
@@ -49,7 +49,7 @@ export default function SettingsForm({ action, settings }) {
 
         {/* Flashcard count per session */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-gray-600">
+          <label className="text-[13px] font-medium text-gray-600">
             Số thẻ mỗi phiên Flashcard
           </label>
           <div className="flex items-center gap-3">
@@ -78,14 +78,14 @@ export default function SettingsForm({ action, settings }) {
             />
             <span className="text-[13px] text-gray-700">Hiện pinyin mặc định trong Lyrics</span>
           </label>
-          <p className="text-[11px] text-gray-400 mt-1 ml-7">
+          <p className="text-[12px] text-gray-400 mt-1 ml-7">
             Bật = pinyin luôn hiện khi mở bài hát, không cần nhấn nút toggle.
           </p>
         </div>
 
         <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
           <SaveButton />
-          {saved && <span className="text-[12px] text-green-600">✓ Đã lưu</span>}
+          {saved && <span className="text-[13px] text-green-600">✓ Đã lưu</span>}
         </div>
       </form>
 

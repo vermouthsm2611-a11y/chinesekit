@@ -14,8 +14,8 @@ export default async function PatternsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Cấu trúc</h1>
-          <p className="text-[13px] text-gray-400 mt-0.5">
+          <h1 className="text-2xl font-medium text-gray-900">Cấu trúc</h1>
+          <p className="text-[14px] text-gray-400 mt-0.5">
             {patterns?.length ?? 0} patterns
           </p>
         </div>

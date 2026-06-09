@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import PinyinText from '@/components/ui/PinyinText'
 
 const SOURCE_LABELS = {
   manual: '✏️ Manual',
@@ -89,23 +90,23 @@ function PatternCard({ pattern, isOpen, onToggle }) {
         <div className="flex-1 min-w-0">
           {/* Pattern */}
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="hanzi text-[18px]">{pattern.hanzi}</span>
-            {pattern.pinyin && <span className="text-[13px] text-gray-400">{pattern.pinyin}</span>}
-            {pattern.hv     && <span className="text-[12px] text-gray-400 italic">{pattern.hv}</span>}
+            <span className="hanzi text-[22px]">{pattern.hanzi}</span>
+            {pattern.pinyin && <PinyinText pinyin={pattern.pinyin} className="text-[15px]" />}
+            {pattern.hv     && <span className="text-[13px] text-gray-400 italic">{pattern.hv}</span>}
           </div>
           {pattern.meaning_vi && (
-            <p className="text-[13px] text-gray-600 mt-0.5">{pattern.meaning_vi}</p>
+            <p className="text-[15px] text-gray-600 mt-0.5 font-medium">{pattern.meaning_vi}</p>
           )}
 
           {/* Ví dụ đầu tiên — luôn hiện */}
           {firstExample && (
             <div className="mt-3 pl-3 border-l-2 border-gray-100">
-              <p className="hanzi text-[15px] text-gray-700">{firstExample.hanzi}</p>
+              <p className="hanzi text-[17px] text-gray-700">{firstExample.hanzi}</p>
               {firstExample.pinyin && (
-                <p className="text-[12px] text-gray-400 mt-0.5">{firstExample.pinyin}</p>
+                <PinyinText pinyin={firstExample.pinyin} className="text-[14px] mt-0.5 block" />
               )}
               {firstExample.vi && (
-                <p className="text-[12px] text-gray-500 italic mt-0.5">{firstExample.vi}</p>
+                <p className="text-[14px] text-gray-500 italic mt-0.5">{firstExample.vi}</p>
               )}
             </div>
           )}
@@ -133,16 +134,16 @@ function PatternCard({ pattern, isOpen, onToggle }) {
               <p className="text-[10px] text-gray-400 mb-1 uppercase tracking-wide">
                 Ví dụ {i + 2}
               </p>
-              <p className="hanzi text-[15px] text-gray-700">{ex.hanzi}</p>
-              {ex.pinyin && <p className="text-[12px] text-gray-400 mt-0.5">{ex.pinyin}</p>}
-              {ex.vi     && <p className="text-[12px] text-gray-500 italic mt-0.5">{ex.vi}</p>}
+              <p className="hanzi text-[17px] text-gray-700">{ex.hanzi}</p>
+              {ex.pinyin && <PinyinText pinyin={ex.pinyin} className="text-[14px] mt-0.5 block" />}
+              {ex.vi     && <p className="text-[14px] text-gray-500 italic mt-0.5">{ex.vi}</p>}
             </div>
           ))}
 
           {pattern.notes && (
             <div>
               <p className="text-[11px] text-gray-400 mb-1 uppercase tracking-wide">Ghi chú</p>
-              <p className="text-[13px] text-gray-600 leading-relaxed">{pattern.notes}</p>
+              <p className="text-[15px] text-gray-600 leading-relaxed">{pattern.notes}</p>
             </div>
           )}
 

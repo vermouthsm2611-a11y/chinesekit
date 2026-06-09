@@ -39,12 +39,12 @@ export default function ResultsDonut({ results, total }) {
             <div className={`w-2.5 h-2.5 rounded-sm flex-shrink-0 ${bg}`} />
             <span className="text-[13px] text-gray-600 flex-1">{label}</span>
             <span className={`text-[13px] font-medium ${text}`}>{count}</span>
-            <span className="text-[12px] text-gray-400 w-8 text-right">{pct}%</span>
+            <span className="text-[13px] text-gray-400 w-8 text-right">{pct}%</span>
           </div>
         ))}
         <div className="flex items-center gap-3 pt-1 border-t border-gray-100">
           <div className="w-2.5" />
-          <span className="text-[12px] text-gray-400 flex-1">Tổng</span>
+          <span className="text-[13px] text-gray-400 flex-1">Tổng</span>
           <span className="text-[13px] font-medium text-gray-700">{total}</span>
         </div>
       </div>

@@ -37,14 +37,14 @@ export default function Sidebar() {
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 hover:opacity-80 transition-opacity">
         <img src="/slidebar.png" alt="ChineseKit" className="w-9 h-9 object-contain" />
-        <span className="font-medium text-[15px]">ChineseKit</span>
+        <span className="font-medium text-[16px]">ChineseKit</span>
       </Link>
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-3">
         {NAV.map(({ section, items }) => (
           <div key={section} className="mb-1">
-            <p className="px-5 py-1.5 text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+            <p className="px-5 py-1.5 text-[12px] uppercase tracking-wider text-gray-400 font-medium">
               {section}
             </p>
             {items.map(({ href, label, icon }) => {
@@ -54,7 +54,7 @@ export default function Sidebar() {
                   key={href}
                   href={href}
                   className={[
-                    'flex items-center gap-2.5 px-5 py-2 text-[13px] transition-colors',
+                    'flex items-center gap-2.5 px-5 py-2.5 text-[15px] transition-colors',
                     active
                       ? 'bg-[#FEF2F2] text-[#E24B4A] font-medium border-l-2 border-[#E24B4A] pl-[calc(1.25rem-2px)]'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',

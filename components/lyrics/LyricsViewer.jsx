@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { pinyin } from 'pinyin-pro'
 import { supabase } from '@/lib/supabase'
 import WordPopup from './WordPopup'
+import { detectTone, getToneColor } from '@/lib/toneColor'
 
 // Chỉ ký tự CJK mới clickable
 const CJK = /[一-鿿㐀-䶿豈-﫿]/
@@ -29,8 +30,13 @@ function HanziLine({ text, showPinyin, onCharClick }) {
               style={{ fontSize: '20px' }}
             >
               {char}
-              {/* rt: pinyin nhỏ phía trên */}
-              <rt style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400, letterSpacing: 0 }}>
+              {/* rt: pinyin nhỏ phía trên — màu theo tone */}
+              <rt style={{
+                fontSize: '11px',
+                color: getToneColor(detectTone(py ?? '')),
+                fontWeight: 400,
+                letterSpacing: 0,
+              }}>
                 {py}
               </rt>
             </ruby>
@@ -102,7 +108,7 @@ export default function LyricsViewer({ lines, initialShowPinyin = false }) {
             />
 
             {line.vietsub && (
-              <p className="text-[14px] text-gray-400 mt-1 group-hover:text-gray-600 transition-colors">
+              <p className="text-[15px] text-gray-400 mt-1 group-hover:text-gray-600 transition-colors">
                 {line.vietsub}
               </p>
             )}

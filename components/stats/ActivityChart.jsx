@@ -25,7 +25,7 @@ export default function ActivityChart({ days }) {
               {/* Tooltip on hover */}
               <div className="relative flex flex-col items-center">
                 {count > 0 && (
-                  <span className="absolute -top-5 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  <span className="absolute -top-5 text-[11px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                     {count}
                   </span>
                 )}
@@ -50,7 +50,7 @@ export default function ActivityChart({ days }) {
         {days.map(({ date }, i) => (
           <div key={date} className="flex-1 text-center">
             {(i === 0 || i === 6 || i === 13) && (
-              <span className="text-[10px] text-gray-400">{formatDate(date)}</span>
+              <span className="text-[11px] text-gray-400">{formatDate(date)}</span>
             )}
           </div>
         ))}
@@ -59,15 +59,15 @@ export default function ActivityChart({ days }) {
       {/* Summary */}
       <div className="flex gap-4 mt-3 pt-3 border-t border-gray-100">
         <div>
-          <p className="text-[11px] text-gray-400">Tổng 14 ngày</p>
+          <p className="text-[12px] text-gray-400">Tổng 14 ngày</p>
           <p className="text-[15px] font-medium text-gray-800">{total}</p>
         </div>
         <div>
-          <p className="text-[11px] text-gray-400">Trung bình / ngày</p>
+          <p className="text-[12px] text-gray-400">Trung bình / ngày</p>
           <p className="text-[15px] font-medium text-gray-800">{avg}</p>
         </div>
         <div>
-          <p className="text-[11px] text-gray-400">Cao nhất</p>
+          <p className="text-[12px] text-gray-400">Cao nhất</p>
           <p className="text-[15px] font-medium text-gray-800">{max}</p>
         </div>
       </div>

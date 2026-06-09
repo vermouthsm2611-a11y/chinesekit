@@ -28,7 +28,7 @@ export default function BottomNav() {
                         ${active ? 'text-[#E24B4A]' : 'text-gray-400'}`}
           >
             <span className="text-xl leading-none">{icon}</span>
-            <span className="text-[10px] font-medium leading-none">{label}</span>
+            <span className="text-[12px] font-medium leading-none">{label}</span>
           </Link>
         )
       })}

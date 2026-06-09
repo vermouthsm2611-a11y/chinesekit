@@ -33,15 +33,15 @@ export default function FlashcardPreview({ entry, reviewedToday, dailyGoal = 20 
                 <p className="text-[11px] text-gray-400">Nhấn để xem nghĩa</p>
                 <p className="hanzi text-4xl">{entry.hanzi}</p>
                 {entry.pinyin && (
-                  <p className="text-[12px] text-gray-400">{entry.pinyin}</p>
+                  <p className="text-[14px] text-gray-400">{entry.pinyin}</p>
                 )}
               </>
             ) : (
               <>
                 <p className="hanzi text-4xl">{entry.hanzi}</p>
-                {entry.pinyin    && <p className="text-[13px] text-gray-500">{entry.pinyin}</p>}
-                {entry.hv        && <p className="text-[12px] text-gray-400">{entry.hv}</p>}
-                <p className="text-[15px] font-medium text-gray-800">{entry.meaning_vi}</p>
+                {entry.pinyin    && <p className="text-[15px] text-gray-500">{entry.pinyin}</p>}
+                {entry.hv        && <p className="text-[13px] text-gray-400">{entry.hv}</p>}
+                <p className="text-[16px] font-medium text-gray-800">{entry.meaning_vi}</p>
               </>
             )}
           </div>

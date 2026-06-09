@@ -135,7 +135,7 @@ export default async function DashboardPage() {
 
         {/* Source breakdown — real counts */}
         <div className="card">
-          <p className="text-[13px] font-medium text-gray-800 mb-4">📌 Nguồn học</p>
+          <p className="text-[14px] font-medium text-gray-800 mb-4">📌 Nguồn học</p>
           <div className="flex flex-col gap-3">
             {sourceCounts.map(({ label, emoji, color, count }) => {
               const pct = totalEntries > 0 ? (count / totalEntries) * 100 : 0
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
                 <div key={label}>
                   <div className="flex items-center justify-between mb-1">
                     <span className={`badge ${color}`}>{emoji} {label}</span>
-                    <span className="text-[12px] text-gray-500 font-medium">{count}</span>
+                    <span className="text-[13px] text-gray-500 font-medium">{count}</span>
                   </div>
                   <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                     <div
