@@ -157,7 +157,7 @@ chinesekit/
 |---|---|
 | Dashboard | Stats thật, streak, flashcard preview, nguồn học |
 | Từ vựng | Chỉ `type='vocab'`, search + filter nguồn + sort, table desktop 8 cột / card rows mobile |
-| Patterns | Chỉ `type='pattern'`, accordion, multiple examples |
+| Patterns | Chỉ `type='pattern'`, grid 1:1 (cấu trúc | ví dụ đầu), accordion extra examples |
 | Flashcard | Score-based priority (incorrect×2 - correct), shuffle sau mount |
 | Lyrics | Auto-translate vietsub, pinyin toggle, click-to-lookup, sticky toolbar |
 | Thống kê | Streak, 14-day chart CSS, results donut, top reviewed |
@@ -172,7 +172,7 @@ chinesekit/
 - **revalidatePath** — dùng targeted path (`/vocab`, `/patterns`...), **không** dùng `revalidatePath('/', 'layout')` — gây 2s delay mỗi navigation
 - **force-dynamic** — chỉ dùng cho `/` (Dashboard) vì cần streak/reviewedToday realtime; các page khác không cần
 - **loading.jsx** — có ở tất cả routes, dùng `animate-pulse` skeleton
-- **Sticky toolbar** — `sticky top-0 z-10 bg-[#F7F7F5]` cho VocabList, PatternList, LyricsViewer
+- **Sticky toolbar** — `sticky top-0 z-10` + `style={{ background: "var(--bg-base)" }}` cho VocabList, PatternList, LyricsViewer
 - **Dual layout VocabList** — `md:hidden` card rows mobile, `hidden md:block` table desktop
 - **`useSearchParams()` cần `<Suspense>`** — bọc component dùng hook này hoặc hydration failure
 - **Hydration với `Math.random()`** — shuffle trong `useEffect`, không trong `useState`

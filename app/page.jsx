@@ -104,22 +104,25 @@ export default async function DashboardPage() {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-medium text-gray-900">Dashboard</h1>
+        <h1 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+          Dashboard
+        </h1>
         <div className="flex gap-2">
           <Link href="/vocab" className="btn">🔍 Tìm từ</Link>
           <Link href="/vocab/new" className="btn btn-primary">+ Thêm từ</Link>
         </div>
       </div>
 
-      {/* Stat cards */}
+      {/* Stat cards — streak dùng accent=true để highlight bằng pink-soft */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        <StatCard label="Từ vựng"    value={vocabCount   ?? 0} sub="entries" />
-        <StatCard label="Cấu trúc"   value={patternCount ?? 0} sub="patterns" />
+        <StatCard label="Từ vựng"    value={vocabCount    ?? 0} sub="entries" />
+        <StatCard label="Cấu trúc"   value={patternCount  ?? 0} sub="patterns" />
         <StatCard label="Ôn hôm nay" value={reviewedToday ?? 0} sub={`/ ${dailyGoal} mục tiêu`} />
         <StatCard
-          label="Streak"
-          value={streak > 0 ? `${streak} 🔥` : '—'}
+          label="Streak 🔥"
+          value={streak > 0 ? `${streak}` : '—'}
           sub="ngày liên tiếp"
+          accent
         />
       </div>
 
@@ -135,7 +138,9 @@ export default async function DashboardPage() {
 
         {/* Source breakdown — real counts */}
         <div className="card">
-          <p className="text-[14px] font-medium text-gray-800 mb-4">📌 Nguồn học</p>
+          <p className="text-[14px] font-medium mb-4" style={{ color: 'var(--text-primary)' }}>
+            📌 Nguồn học
+          </p>
           <div className="flex flex-col gap-3">
             {sourceCounts.map(({ label, emoji, color, count }) => {
               const pct = totalEntries > 0 ? (count / totalEntries) * 100 : 0
@@ -143,13 +148,13 @@ export default async function DashboardPage() {
                 <div key={label}>
                   <div className="flex items-center justify-between mb-1">
                     <span className={`badge ${color}`}>{emoji} {label}</span>
-                    <span className="text-[13px] text-gray-500 font-medium">{count}</span>
+                    <span className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                      {count}
+                    </span>
                   </div>
-                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-[#E24B4A] transition-all duration-700"
-                      style={{ width: `${pct}%` }}
-                    />
+                  {/* Progress bar dùng CSS class từ globals.css */}
+                  <div className="progress-bar">
+                    <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               )

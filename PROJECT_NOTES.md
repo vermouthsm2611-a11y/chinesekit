@@ -308,3 +308,84 @@ Các cải tiến đáng làm theo thứ tự ưu tiên:
 4. **Flashcard SRS** — 3 bucket: mới / đang học / đã nhớ
 5. **Tag/category tự do** — gom nhóm theo chủ đề ngoài `source`
 6. **Quick-add từ lyrics** — click từ lạ trong lyrics → thêm thẳng vào vocab
+
+---
+
+## SESSION — UI Polish & Typography Scale (2026-06-17)
+
+### Design tokens — sidebar width
+
+`--sidebar-w` cập nhật từ 220px → 260px. Ba nơi phải sync:
+- `design-tokens.css` — `--sidebar-w: 260px`
+- `components/Sidebar.jsx` — `w-[260px]`
+- `app/layout.jsx` — `ml-[260px]`
+
+### Sticky toolbar — dùng CSS var thay hardcode
+
+```jsx
+// SAI — hardcode màu nền
+<div className="sticky top-0 z-10 bg-[#F7F7F5]">
+
+// ĐÚNG — CSS var, tự adapt khi đổi theme
+<div className="sticky top-0 z-10" style={{ background: 'var(--bg-base)' }}>
+```
+
+### PatternList — grid 1:1 thay accordion header đơn cột
+
+Vấn đề: Header accordion chỉ có hanzi + pinyin → cột trái trống khi không điền meaning_en/hv.
+
+Fix: `grid grid-cols-1 md:grid-cols-2` — cột trái (cấu trúc), cột phải (ví dụ đầu tiên), cùng row structure `hanzi / pinyin / nghĩa`. Extra examples + ghi chú vẫn accordion bên dưới.
+
+### SentenceList — 3-column desktop
+
+```jsx
+<div className="hidden md:grid md:grid-cols-[1fr_1fr_1fr] md:items-center gap-x-6">
+  <p className="hanzi text-[24px]">{hanzi}</p>
+  <PinyinText className="text-[16px]" />
+  <p className="text-[17px] lowercase">{meaning_vi}</p>
+</div>
+```
+
+### Typography scale áp dụng
+
+| Element | Before | After |
+|---|---|---|
+| Lyrics hanzi | 20px | 32px |
+| Lyrics pinyin `<rt>` | 11px | 16px |
+| Lyrics vietsub | 15px | 18px |
+| Sidebar nav | 15px | 18px |
+| Page h1 | text-2xl | 30px semibold |
+| Filter pills | text-sm | 16px |
+| Section label | 11px | 12px |
+
+### JSX comment gotchas — 2 trường hợp build lỗi
+
+```jsx
+// CASE 1: comment ngay sau return (
+return (
+  {/* SAI — parse error */}
+  <div>
+
+// Fix: dùng // comment TRÊN return
+// Mobile: ...
+return (
+  <div>
+
+// CASE 2: comment trong ternary ) : (
+) : (
+  {/* SAI */}
+  <div>
+
+// Fix: dùng block comment
+) : (
+  /* comment */
+  <div>
+```
+
+### Server Component — event handlers bị reject
+
+`onMouseEnter`/`onMouseLeave` không thể dùng trong Server Components. Phải remove hoặc chuyển component sang `'use client'`.
+
+### System reminder truncation — workaround
+
+Hệ thống truncate file khi hiển thị diff trong system reminder. **Workaround:** dùng `python3` để ghi file in-place thay vì `Edit` tool cho các đoạn dài. Luôn verify bằng `tail` + brace count sau mỗi lần sửa.

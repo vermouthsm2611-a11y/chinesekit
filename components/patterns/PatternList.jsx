@@ -30,7 +30,7 @@ export default function PatternList({ patterns }) {
     return (
       <div className="card text-center py-16">
         <p className="text-3xl mb-3">🧩</p>
-        <p className="text-[14px] text-gray-400 mb-4">Chưa có cấu trúc nào.</p>
+        <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>Chưa có cấu trúc nào.</p>
         <Link href="/vocab/new?type=pattern" className="btn btn-primary inline-flex">
           + Thêm cấu trúc đầu tiên
         </Link>
@@ -41,7 +41,7 @@ export default function PatternList({ patterns }) {
   return (
     <div className="flex flex-col gap-3">
       {/* sticky: search bar bám đầu viewport khi scroll qua list accordion dài */}
-      <div className="sticky top-0 z-10 bg-[#F7F7F5] pb-2">
+      <div className="sticky top-0 z-10 pb-2" style={{ background: 'var(--bg-base)' }}>
         <input
           type="text"
           placeholder="Tìm cấu trúc, nghĩa, ví dụ..."
@@ -52,7 +52,7 @@ export default function PatternList({ patterns }) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-[13px] text-gray-400 mt-4">Không tìm thấy kết quả nào.</p>
+        <p className="text-sm mt-4" style={{ color: 'var(--text-muted)' }}>Không tìm thấy kết quả nào.</p>
       ) : (
         filtered.map(p => (
           <PatternCard
@@ -69,7 +69,6 @@ export default function PatternList({ patterns }) {
 
 // ── PatternCard ────────────────────────────────────────────────────────────────
 function PatternCard({ pattern, isOpen, onToggle }) {
-  // Normalize examples: ưu tiên jsonb mới, fallback data cũ
   const examples = pattern.examples?.length
     ? pattern.examples
     : pattern.example
@@ -78,47 +77,64 @@ function PatternCard({ pattern, isOpen, onToggle }) {
 
   const firstExample  = examples[0] ?? null
   const extraExamples = examples.slice(1)
+  const hasMore       = extraExamples.length > 0 || !!pattern.notes
 
   return (
     <div className="card p-0 overflow-hidden">
-      {/* Header — luôn hiện, click để expand/collapse */}
+      {/* Header — horizontal layout trên desktop để tránh khoảng trống dọc */}
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-start gap-4 px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+        className="w-full px-5 py-4 text-left transition-colors hover:bg-gray-50"
       >
-        <div className="flex-1 min-w-0">
-          {/* Pattern */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="hanzi text-[22px]">{pattern.hanzi}</span>
-            {pattern.pinyin && <PinyinText pinyin={pattern.pinyin} className="text-[15px]" />}
-            {pattern.hv     && <span className="text-[13px] text-gray-400 italic">{pattern.hv}</span>}
-          </div>
-          {pattern.meaning_vi && (
-            <p className="text-[15px] text-gray-600 mt-0.5 font-medium">{pattern.meaning_vi}</p>
-          )}
+        {/* Desktop: grid 2 cột bằng nhau — cùng cấu trúc row hanzi/pinyin/nghĩa */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
 
-          {/* Ví dụ đầu tiên — luôn hiện */}
-          {firstExample && (
-            <div className="mt-3 pl-3 border-l-2 border-gray-100">
-              <p className="hanzi text-[17px] text-gray-700">{firstExample.hanzi}</p>
-              {firstExample.pinyin && (
-                <PinyinText pinyin={firstExample.pinyin} className="text-[14px] mt-0.5 block" />
-              )}
-              {firstExample.vi && (
-                <p className="text-[14px] text-gray-500 italic mt-0.5">{firstExample.vi}</p>
-              )}
-            </div>
-          )}
+          {/* Col 1: cấu trúc */}
+          <div>
+            <p className="hanzi text-[26px] leading-snug" style={{ color: 'var(--text-primary)' }}>
+              {pattern.hanzi}
+            </p>
+            {pattern.pinyin
+              ? <PinyinText pinyin={pattern.pinyin} className="text-[17px] mt-1 block" />
+              : <span className="block mt-1 text-[17px]" style={{ color: 'var(--text-muted)' }}>—</span>
+            }
+            <p className="text-[17px] font-medium mt-1" style={{ color: 'var(--text-secondary)' }}>
+              {pattern.meaning_vi || <span style={{ color: 'var(--text-muted)' }}>—</span>}
+            </p>
+          </div>
+
+          {/* Col 2: ví dụ đầu tiên — cùng row structure, cùng size */}
+          <div className="md:border-l md:pl-5" style={{ borderColor: 'var(--border)' }}>
+            {firstExample ? (
+              <>
+                <p className="hanzi text-[26px] leading-snug" style={{ color: 'var(--text-secondary)' }}>
+                  {firstExample.hanzi}
+                </p>
+                {firstExample.pinyin
+                  ? <PinyinText pinyin={firstExample.pinyin} className="text-[17px] mt-1 block" />
+                  : <span className="block mt-1 text-[17px]" style={{ color: 'var(--text-muted)' }}>—</span>
+                }
+                <p className="text-[17px] italic mt-1" style={{ color: 'var(--text-muted)' }}>
+                  {firstExample.vi || '—'}
+                </p>
+              </>
+            ) : (
+              <p className="text-base" style={{ color: 'var(--text-muted)' }}>Chưa có ví dụ</p>
+            )}
+          </div>
         </div>
 
-        {/* Meta + toggle */}
-        <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+        {/* Meta + expand — đặt ngoài grid, căn phải */}
+        <div className="flex items-center justify-end gap-2 mt-3">
           {pattern.source && pattern.source !== 'manual' && (
-            <span className="text-[11px] text-gray-400">{SOURCE_LABELS[pattern.source]}</span>
+            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              {SOURCE_LABELS[pattern.source]}
+            </span>
           )}
-          {(extraExamples.length > 0 || pattern.notes) && (
-            <span className="text-[10px] text-gray-300 border border-gray-200 rounded px-1">
+          {hasMore && (
+            <span className="text-xs border rounded px-1.5 py-0.5"
+                  style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}>
               {isOpen ? '▲' : '▼'}
             </span>
           )}
@@ -126,41 +142,53 @@ function PatternCard({ pattern, isOpen, onToggle }) {
       </button>
 
       {/* Expanded: ví dụ còn lại + ghi chú */}
-      {isOpen && (extraExamples.length > 0 || pattern.notes) && (
-        <div className="border-t border-gray-100 px-5 py-4 bg-gray-50 flex flex-col gap-4">
-
+      {isOpen && hasMore && (
+        <div className="border-t px-5 py-4 flex flex-col gap-4"
+             style={{ borderColor: 'var(--border)', background: 'var(--bg-muted)' }}>
           {extraExamples.map((ex, i) => (
-            <div key={i} className="pl-3 border-l-2 border-gray-200">
-              <p className="text-[10px] text-gray-400 mb-1 uppercase tracking-wide">
+            <div key={i} className="pl-3 border-l-2" style={{ borderColor: 'var(--border-strong)' }}>
+              <p className="text-xs mb-1 uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
                 Ví dụ {i + 2}
               </p>
-              <p className="hanzi text-[17px] text-gray-700">{ex.hanzi}</p>
-              {ex.pinyin && <PinyinText pinyin={ex.pinyin} className="text-[14px] mt-0.5 block" />}
-              {ex.vi     && <p className="text-[14px] text-gray-500 italic mt-0.5">{ex.vi}</p>}
+              <p className="hanzi text-[17px]" style={{ color: 'var(--text-secondary)' }}>{ex.hanzi}</p>
+              {ex.pinyin && <PinyinText pinyin={ex.pinyin} className="text-sm mt-0.5 block" />}
+              {ex.vi     && <p className="text-sm italic mt-0.5" style={{ color: 'var(--text-muted)' }}>{ex.vi}</p>}
             </div>
           ))}
 
           {pattern.notes && (
             <div>
-              <p className="text-[11px] text-gray-400 mb-1 uppercase tracking-wide">Ghi chú</p>
-              <p className="text-[15px] text-gray-600 leading-relaxed">{pattern.notes}</p>
+              <p className="text-xs mb-1 uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
+                Ghi chú
+              </p>
+              <p className="text-[15px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {pattern.notes}
+              </p>
             </div>
           )}
 
           <div className="flex justify-end">
             <Link href={`/vocab/${pattern.id}?back=/patterns`}
-              className="text-[12px] text-gray-400 hover:text-[#E24B4A] transition-colors">
+              className="text-sm transition-colors"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--pink)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+            >
               ✏️ Sửa →
             </Link>
           </div>
         </div>
       )}
 
-      {/* Nếu không có extra nhưng vẫn muốn link sửa → hiện inline */}
-      {!isOpen && extraExamples.length === 0 && !pattern.notes && (
+      {/* Edit link khi không có extra content */}
+      {!hasMore && (
         <div className="px-5 pb-3 flex justify-end">
           <Link href={`/vocab/${pattern.id}?back=/patterns`}
-            className="text-[12px] text-gray-400 hover:text-[#E24B4A] transition-colors">
+            className="text-sm transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--pink)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+          >
             ✏️ Sửa →
           </Link>
         </div>

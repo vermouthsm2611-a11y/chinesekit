@@ -23,7 +23,7 @@ export default async function VocabPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-medium text-gray-900">Từ vựng</h1>
+          <h1 className="text-[30px] font-semibold">Từ vựng</h1>
           <p className="text-[14px] text-gray-400 mt-0.5">
             {entries.length} từ vựng
           </p>

@@ -4,7 +4,7 @@
  *
  * Props:
  *   pinyin   {string}  — chuỗi pinyin có dấu, vd: "nǐ hǎo"
- *   className {string} — class bổ sung (vd: text-[12px] lowercase)
+ *   className {string} — class bổ sung (vd: text-[13px] lowercase)
  *
  * Dùng thay cho <span className="text-gray-400">{entry.pinyin}</span>
  * ở mọi nơi trong app.

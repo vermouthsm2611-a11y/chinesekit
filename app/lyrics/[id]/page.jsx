@@ -31,7 +31,7 @@ export default async function LyricsPage({ params }) {
               ← Bài hát
             </Link>
           </div>
-          <h1 className="text-2xl font-medium text-gray-900">{song.title}</h1>
+          <h1 className="text-[30px] font-semibold">{song.title}</h1>
           {song.artist && (
             <p className="text-[15px] text-gray-400 mt-0.5">{song.artist}</p>
           )}

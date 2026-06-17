@@ -60,14 +60,15 @@ export default function VocabList({ entries }) {
   return (
     <div>
       {/* ── Toolbar — sticky khi scroll ─────────────────── */}
-      <div className="sticky top-0 z-10 bg-[#F7F7F5] pb-3 flex flex-col gap-2">
+      <div className="sticky top-0 z-10 pb-3 flex flex-col gap-2"
+           style={{ background: 'var(--bg-base)' }}>
         <input
           type="search"
           placeholder="Tìm hanzi, pinyin, nghĩa..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full px-4 py-3 text-[15px] border border-gray-200
-                     rounded-lg bg-white outline-none focus:border-[#E24B4A] transition-colors"
+                     rounded-lg bg-white outline-none focus:border-[var(--pink)] transition-colors"
         />
 
         {/* Filter row — cuộn ngang mobile, wrap desktop */}
@@ -121,7 +122,7 @@ export default function VocabList({ entries }) {
             <div className="overflow-x-auto">
               <table className="w-full text-[15px]">
                 <thead>
-                  <tr className="border-b border-gray-100 text-[11px] text-gray-400 uppercase tracking-wide">
+                  <tr className="border-b border-gray-100 text-[13px] text-gray-400 uppercase tracking-wide">
                     <th className="text-left px-4 py-2.5 font-medium w-[120px]">Hanzi</th>
                     <th className="text-left px-4 py-2.5 font-medium w-[120px]">Hán-Việt</th>
                     <th className="text-left px-4 py-2.5 font-medium w-[140px]">Pinyin</th>
@@ -188,7 +189,7 @@ export default function VocabList({ entries }) {
                         <td className="px-4 py-3 align-middle">
                           <Link
                             href={`/vocab/${entry.id}`}
-                            className="text-gray-400 hover:text-[#E24B4A] transition-colors"
+                            className="text-gray-400 hover:text-[var(--pink)] transition-colors"
                           >
                             Sửa →
                           </Link>
@@ -249,17 +250,19 @@ function MobileRow({ entry, search }) {
 // ── FilterGroup ──────────────────────────────────────────────────────────────
 function FilterGroup({ value, onChange, options }) {
   return (
-    <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1 flex-shrink-0">
+    <div className="flex gap-1 rounded-lg p-1 flex-shrink-0 border"
+         style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
       {options.map((opt) => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
           className={[
-            'px-3 py-1.5 text-[13px] rounded-md transition-colors whitespace-nowrap',
+            'px-4 py-2 text-[16px] rounded-md transition-colors whitespace-nowrap',
             value === opt.value
-              ? 'bg-[#E24B4A] text-white'
-              : 'text-gray-500 hover:bg-gray-100',
+              ? 'bg-[var(--pink)] text-white'
+              : 'hover:bg-[var(--bg-muted)]',
           ].join(' ')}
+          style={value !== opt.value ? { color: 'var(--text-secondary)' } : {}}
         >
           {opt.label}
         </button>

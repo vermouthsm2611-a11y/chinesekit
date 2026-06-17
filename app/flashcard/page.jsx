@@ -52,7 +52,7 @@ export default async function FlashcardPage({ searchParams }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-medium text-gray-900">Flashcard</h1>
+        <h1 className="text-[30px] font-semibold" style={{ color: 'var(--text-primary)' }}>Flashcard</h1>
         <Link href="/" className="btn">← Dashboard</Link>
       </div>
 
@@ -86,22 +86,30 @@ function SessionFilter({ currentType, currentSource }) {
     return `/flashcard${p.toString() ? '?' + p : ''}`
   }
 
+  // Mobile: cuộn ngang thay vì wrap — tránh 2-3 dòng nút trên màn nhỏ
   return (
-    <div className="flex flex-wrap gap-2 mb-5">
-      <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
+    <div className="flex gap-2 mb-5 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible
+                    [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-1 rounded-lg p-1 flex-shrink-0 border"
+           style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
         {types.map(([v, l]) => (
           <a key={v} href={buildUrl(v, currentSource)}
-            className={`px-3 py-1 text-[13px] rounded-md transition-colors ${
-              currentType === v ? 'bg-[#E24B4A] text-white' : 'text-gray-500 hover:bg-gray-100'
-            }`}>{l}</a>
+            className={`px-4 py-1.5 text-[16px] rounded-md transition-colors whitespace-nowrap ${
+              currentType === v ? 'bg-[var(--pink)] text-white' : 'hover:bg-[var(--bg-muted)]'
+            }`}
+            style={currentType !== v ? { color: 'var(--text-secondary)' } : {}}
+          >{l}</a>
         ))}
       </div>
-      <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
+      <div className="flex gap-1 rounded-lg p-1 flex-shrink-0 border"
+           style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
         {sources.map(([v, l]) => (
           <a key={v} href={buildUrl(currentType, v)}
-            className={`px-3 py-1 text-[13px] rounded-md transition-colors ${
-              currentSource === v ? 'bg-[#E24B4A] text-white' : 'text-gray-500 hover:bg-gray-100'
-            }`}>{l}</a>
+            className={`px-4 py-1.5 text-[16px] rounded-md transition-colors whitespace-nowrap ${
+              currentSource === v ? 'bg-[var(--pink)] text-white' : 'hover:bg-[var(--bg-muted)]'
+            }`}
+            style={currentSource !== v ? { color: 'var(--text-secondary)' } : {}}
+          >{l}</a>
         ))}
       </div>
     </div>

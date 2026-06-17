@@ -6,14 +6,14 @@ export default function RecentEntries({ entries }) {
     <div className="card">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[13px] font-medium text-gray-800">🕐 Mới thêm gần đây</p>
-        <Link href="/vocab" className="text-[12px] text-gray-400 hover:text-gray-600">
+        <Link href="/vocab" className="text-[13px] text-gray-400 hover:text-gray-600">
           Xem thư viện →
         </Link>
       </div>
 
       {entries.length === 0 ? (
         <p className="text-[13px] text-gray-400 py-4 text-center">
-          Chưa có từ nào — <Link href="/vocab/new" className="text-[#E24B4A]">thêm từ đầu tiên</Link>
+          Chưa có từ nào — <Link href="/vocab/new" className="text-[var(--pink)]">thêm từ đầu tiên</Link>
         </p>
       ) : (
         <div className="divide-y divide-gray-50">

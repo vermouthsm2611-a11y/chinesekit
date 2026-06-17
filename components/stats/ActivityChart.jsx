@@ -25,7 +25,7 @@ export default function ActivityChart({ days }) {
               {/* Tooltip on hover */}
               <div className="relative flex flex-col items-center">
                 {count > 0 && (
-                  <span className="absolute -top-5 text-[11px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  <span className="absolute -top-5 text-sm text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                     {count}
                   </span>
                 )}
@@ -34,8 +34,8 @@ export default function ActivityChart({ days }) {
                     count === 0
                       ? 'bg-gray-100'
                       : isToday
-                        ? 'bg-[#E24B4A]'
-                        : 'bg-[#F4A3A2] group-hover:bg-[#E24B4A]'
+                        ? 'bg-[var(--pink)]'
+                        : 'bg-[var(--pink-border)] group-hover:bg-[var(--pink)]'
                   }`}
                   style={{ height: `${Math.max(heightPct * 1.1, count > 0 ? 4 : 2)}px` }}
                 />
@@ -50,7 +50,7 @@ export default function ActivityChart({ days }) {
         {days.map(({ date }, i) => (
           <div key={date} className="flex-1 text-center">
             {(i === 0 || i === 6 || i === 13) && (
-              <span className="text-[11px] text-gray-400">{formatDate(date)}</span>
+              <span className="text-sm text-gray-400">{formatDate(date)}</span>
             )}
           </div>
         ))}
@@ -59,15 +59,15 @@ export default function ActivityChart({ days }) {
       {/* Summary */}
       <div className="flex gap-4 mt-3 pt-3 border-t border-gray-100">
         <div>
-          <p className="text-[12px] text-gray-400">Tổng 14 ngày</p>
+          <p className="text-sm text-gray-400">Tổng 14 ngày</p>
           <p className="text-[15px] font-medium text-gray-800">{total}</p>
         </div>
         <div>
-          <p className="text-[12px] text-gray-400">Trung bình / ngày</p>
+          <p className="text-sm text-gray-400">Trung bình / ngày</p>
           <p className="text-[15px] font-medium text-gray-800">{avg}</p>
         </div>
         <div>
-          <p className="text-[12px] text-gray-400">Cao nhất</p>
+          <p className="text-sm text-gray-400">Cao nhất</p>
           <p className="text-[15px] font-medium text-gray-800">{max}</p>
         </div>
       </div>

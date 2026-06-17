@@ -14,7 +14,7 @@ function HanziLine({ text, showPinyin, onCharClick }) {
   const chars = [...text]
 
   return (
-    <p className="text-[20px] leading-loose text-gray-900 tracking-wide">
+    <p className="text-[32px] leading-loose tracking-wide" style={{ color: 'var(--text-primary)' }}>
       {chars.map((char, i) => {
         const isCJK = CJK.test(char)
         const py    = showPinyin && isCJK ? pinyin(char, { toneType: 'symbol' }) : null
@@ -25,14 +25,14 @@ function HanziLine({ text, showPinyin, onCharClick }) {
               key={i}
               onClick={(e) => onCharClick(char, e)}
               className="cursor-pointer rounded px-0.5 transition-colors
-                         hover:bg-[#FEF2F2] hover:text-[#E24B4A]
+                         hover:bg-[var(--pink-soft)] hover:text-[var(--pink)]
                          [ruby-align:center]"
-              style={{ fontSize: '20px' }}
+              style={{ fontSize: '32px' }}
             >
               {char}
-              {/* rt: pinyin nhỏ phía trên — màu theo tone */}
+              {/* rt: pinyin phía trên — scale tỉ lệ với hanzi */}
               <rt style={{
-                fontSize: '11px',
+                fontSize: '16px',
                 color: getToneColor(detectTone(py ?? '')),
                 fontWeight: 400,
                 letterSpacing: 0,
@@ -48,7 +48,7 @@ function HanziLine({ text, showPinyin, onCharClick }) {
             key={i}
             onClick={(e) => onCharClick(char, e)}
             className="cursor-pointer rounded px-0.5 transition-colors
-                       hover:bg-[#FEF2F2] hover:text-[#E24B4A]"
+                       hover:bg-[var(--pink-soft)] hover:text-[var(--pink)]"
           >
             {char}
           </span>
@@ -82,14 +82,15 @@ export default function LyricsViewer({ lines, initialShowPinyin = false }) {
   return (
     <div className="relative">
       {/* Toggle pinyin — sticky để accessible khi đọc lyrics dài */}
-      <div className="sticky top-0 z-10 bg-[#F7F7F5] flex justify-end pb-3">
+      <div className="sticky top-0 z-10 flex justify-end pb-3"
+           style={{ background: 'var(--bg-base)' }}>
         <button
           type="button"
           onClick={() => setShowPinyin(v => !v)}
-          className={`inline-flex items-center gap-1.5 text-[12px] px-3 py-1.5 rounded-lg
+          className={`inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg
                       border transition-colors
                       ${showPinyin
-                        ? 'border-[#E24B4A] bg-[#FEF2F2] text-[#E24B4A]'
+                        ? 'border-[var(--pink)] bg-[var(--pink-soft)] text-[var(--pink)]'
                         : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
                       }`}
         >
@@ -108,7 +109,11 @@ export default function LyricsViewer({ lines, initialShowPinyin = false }) {
             />
 
             {line.vietsub && (
-              <p className="text-[15px] text-gray-400 mt-1 group-hover:text-gray-600 transition-colors">
+              <p className="text-[18px] mt-1 transition-colors"
+                 style={{ color: 'var(--text-muted)' }}
+                 onMouseEnter={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                 onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+              >
                 {line.vietsub}
               </p>
             )}

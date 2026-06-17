@@ -41,7 +41,7 @@ export default function WordPopup({ char, entries, pos, onClose }) {
               <p className="text-[13px] text-gray-400">Chưa có trong thư viện</p>
               <a
                 href={`/vocab/new?hanzi=${encodeURIComponent(char)}&back=${encodeURIComponent(window.location.pathname)}`}
-                className="btn btn-primary mt-3 text-[12px] w-full justify-center"
+                className="btn btn-primary mt-3 text-[13px] w-full justify-center"
               >
                 + Thêm từ này
               </a>
@@ -56,7 +56,7 @@ export default function WordPopup({ char, entries, pos, onClose }) {
                   {entry.hv && (
                     <span className="text-[13px] text-gray-300">· {entry.hv}</span>
                   )}
-                  <span className={`badge ml-auto text-[10px] ${
+                  <span className={`badge ml-auto text-[13px] ${
                     entry.type === 'vocab' ? 'badge-vocab' : 'badge-pattern'
                   }`}>
                     {entry.type === 'vocab' ? 'từ vựng' : 'cấu trúc'}
@@ -70,7 +70,7 @@ export default function WordPopup({ char, entries, pos, onClose }) {
                 <div className="flex justify-end mt-2">
                   <a
                     href={`/vocab/${entry.id}?back=${encodeURIComponent(window.location.pathname)}`}
-                    className="text-[11px] text-gray-400 hover:text-[#E24B4A] transition-colors"
+                    className="text-[13px] text-gray-400 hover:text-[var(--pink)] transition-colors"
                   >
                     ✏️ Sửa →
                   </a>

@@ -2,63 +2,180 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+/* Import design tokens trước — các utility classes bên dưới dùng variables này */
+@import './design-tokens.css';
 
-/* ── Base ─────────────────────────────────────────── */
-:root {
-  --accent: #E24B4A;
-  --accent-hover: #C83C3B;
-  --sidebar-w: 220px;
-}
-
+/* ── Base ─────────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: #F7F7F5;
-  color: #1a1a1a;
+  /* --font-sans được inject từ next/font qua layout.jsx */
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
-/* ── Scrollbar nhỏ gọn ────────────────────────────── */
-::-webkit-scrollbar       { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #d1d1ce; border-radius: 2px; }
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-muted); border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: var(--pink-border); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--pink); }
 
-/* ── Typography helper ────────────────────────────── */
+/* ── Typography helpers ───────────────────────────────────── */
+
+/* Hanzi — dùng font Noto Sans SC, weight đậm hơn Latin để dễ đọc */
 .hanzi {
-  font-size: 1.25rem;
+  font-family: var(--font-hanzi);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+/* Label section nhỏ — dùng cho sidebar section, table header */
+.label-section {
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
 }
 
-/* ── Card ─────────────────────────────────────────── */
+/* ── Card ─────────────────────────────────────────────────── */
 .card {
-  @apply bg-white rounded-xl border border-gray-100 p-5;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
 }
 
-/* ── Badge ────────────────────────────────────────── */
+/* Card với hover lift — dùng cho clickable cards */
+.card-interactive {
+  @apply card;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.card-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Badge ────────────────────────────────────────────────── */
 .badge {
   @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full;
 }
-.badge-vocab   { @apply bg-blue-50 text-blue-700; }
-.badge-pattern { @apply bg-orange-50 text-orange-700; }
-.badge-song    { @apply bg-green-50 text-green-700; }
+.badge-vocab   { background: var(--violet-soft); color: var(--text-violet); }
+.badge-pattern { background: var(--pink-soft);   color: var(--text-pink); }
+.badge-song    { background: var(--success-soft); color: var(--success); }
 
-/* ── Button ───────────────────────────────────────── */
+/* Source badges — tách màu theo origin */
+.badge-douyin  { @apply bg-blue-50 text-blue-700; }
+.badge-music   { background: var(--violet-soft); color: var(--text-violet); }
+.badge-game    { @apply bg-amber-50 text-amber-700; }
+.badge-manual  { @apply bg-gray-100 text-gray-600; }
+
+/* ── Button ───────────────────────────────────────────────── */
 .btn {
-  @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 text-sm
-         border border-gray-200 rounded-lg bg-white text-gray-700
-         hover:bg-gray-50 transition-colors cursor-pointer;
+  @apply inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium
+         border rounded-xl bg-white cursor-pointer select-none;
+  border-color: var(--border);
+  color: var(--text-secondary);
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease,
+              transform 100ms ease;
 }
-.btn-primary {
-  @apply bg-[#E24B4A] border-[#E24B4A] text-white hover:bg-[#C83C3B];
+.btn:hover {
+  background: var(--bg-muted);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+.btn:active {
+  transform: scale(0.98);
 }
 
-/* ── Input ────────────────────────────────────────── */
-.input {
-  @apply w-full px-3.5 py-2.5 text-[15px] border border-gray-200 rounded-lg bg-white
-         outline-none focus:border-[#E24B4A] transition-colors;
+/* Primary CTA — pink */
+.btn-primary {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: #fff;
 }
+.btn-primary:hover {
+  background: var(--pink-hover);
+  border-color: var(--pink-hover);
+  color: #fff;
+}
+
+/* Secondary — violet outline */
+.btn-secondary {
+  border-color: var(--violet-border);
+  color: var(--text-violet);
+}
+.btn-secondary:hover {
+  background: var(--violet-soft);
+  border-color: var(--violet);
+  color: var(--text-violet);
+}
+
+/* Danger */
+.btn-danger {
+  border-color: #FCA5A5;
+  color: var(--error);
+}
+.btn-danger:hover {
+  background: var(--error-soft);
+  border-color: var(--error);
+}
+
+/* ── Input ────────────────────────────────────────────────── */
+.input {
+  @apply w-full px-3.5 py-2.5 text-[15px] rounded-xl outline-none;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.input::placeholder {
+  color: var(--text-muted);
+}
+.input:focus {
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+/* Textarea inherits .input */
+textarea.input {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
+}
+
+/* ── Sticky toolbar (VocabList, PatternList, LyricsViewer) ── */
+.sticky-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-base);
+  padding-bottom: 0.75rem;
+}
+
+/* ── Progress bar ─────────────────────────────────────────── */
+.progress-bar {
+  @apply w-full h-1.5 rounded-full overflow-hidden;
+  background: var(--border);
+}
+.progress-bar-fill {
+  @apply h-full rounded-full;
+  background: linear-gradient(90deg, var(--pink), var(--violet));
+  transition: width 600ms ease;
+}
+
+/* ── Tone colors (pinyin) ─────────────────────────────────── */
+/* Dùng cho tính năng tone colors trong tương lai */
+.tone-1 { color: #BE185D; }  /* flat     — pink primary */
+.tone-2 { color: #D97706; }  /* rising   — amber */
+.tone-3 { color: #059669; }  /* dipping  — green */
+.tone-4 { color: #7C3AED; }  /* falling  — violet */
+.tone-5 { color: #6B7280; }  /* neutral  — gray */

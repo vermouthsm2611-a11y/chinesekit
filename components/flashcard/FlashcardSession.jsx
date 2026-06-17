@@ -86,15 +86,15 @@ export default function FlashcardSession({ entries }) {
         <div className="grid grid-cols-3 gap-3 mb-8">
           <div className="bg-green-50 rounded-xl p-3">
             <p className="text-2xl font-medium text-green-700">{correct}</p>
-            <p className="text-[11px] text-green-600 mt-0.5">Ổn</p>
+            <p className="text-[13px] text-green-600 mt-0.5">Ổn</p>
           </div>
           <div className="bg-orange-50 rounded-xl p-3">
             <p className="text-2xl font-medium text-orange-700">{incorrect}</p>
-            <p className="text-[11px] text-orange-600 mt-0.5">Khó</p>
+            <p className="text-[13px] text-orange-600 mt-0.5">Khó</p>
           </div>
           <div className="bg-gray-50 rounded-xl p-3">
             <p className="text-2xl font-medium text-gray-600">{skipped}</p>
-            <p className="text-[11px] text-gray-500 mt-0.5">Bỏ qua</p>
+            <p className="text-[13px] text-gray-500 mt-0.5">Bỏ qua</p>
           </div>
         </div>
 
@@ -107,31 +107,28 @@ export default function FlashcardSession({ entries }) {
 
   // ── Session đang chạy ────────────────────────────────────────────────────
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-xl mx-auto">
       {/* Progress */}
-      <div className="flex items-center justify-between text-[12px] text-gray-400 mb-2">
+      <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
         <span>{index + 1} / {total}</span>
         <span>{progress}%</span>
       </div>
-      <div className="w-full h-1.5 bg-gray-100 rounded-full mb-5 overflow-hidden">
-        <div
-          className="h-full bg-[#E24B4A] rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
+      <div className="progress-bar mb-5">
+        <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      {/* Card */}
+      {/* Card — min-h tăng để card có trọng lượng hơn trên màn rộng */}
       <div
         onClick={() => !flipped && setFlipped(true)}
-        className={`card min-h-[260px] flex flex-col items-center justify-center gap-3
+        className={`card min-h-[340px] flex flex-col items-center justify-center gap-4
                     text-center transition-all duration-200 select-none
-                    ${!flipped ? 'cursor-pointer hover:shadow-sm' : ''}`}
+                    ${!flipped ? 'cursor-pointer hover:shadow-md' : ''}`}
       >
         {!flipped ? (
           // Mặt trước — chỉ hiện hanzi
           <>
-            <p className="text-[11px] text-gray-400">Nhấn để xem nghĩa</p>
-            <p className="text-5xl font-medium leading-tight">{current.hanzi}</p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Nhấn để xem nghĩa</p>
+            <p className="hanzi text-6xl leading-tight">{current.hanzi}</p>
             <span className={`badge mt-1 ${current.type === 'vocab' ? 'badge-vocab' : 'badge-pattern'}`}>
               {current.type === 'vocab' ? 'từ vựng' : 'cấu trúc'}
             </span>
@@ -139,40 +136,43 @@ export default function FlashcardSession({ entries }) {
         ) : (
           // Mặt sau — đầy đủ thông tin
           <>
-            <p className="text-4xl font-medium">{current.hanzi}</p>
+            <p className="hanzi text-5xl">{current.hanzi}</p>
             {current.pinyin && (
-              <p className="text-[18px]">
+              <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
                 <PinyinText pinyin={current.pinyin} />
-                {current.hv && <span className="ml-2 text-gray-300">· {current.hv}</span>}
+                {current.hv && <span className="ml-2" style={{ color: 'var(--text-muted)' }}>· {current.hv}</span>}
               </p>
             )}
-            <p className="text-[20px] font-medium text-gray-800">{current.meaning_vi}</p>
+            <p className="text-xl font-medium" style={{ color: 'var(--text-primary)' }}>
+              {current.meaning_vi}
+            </p>
             {current.meaning_en && (
-              <p className="text-[15px] text-gray-400 italic">{current.meaning_en}</p>
+              <p className="text-base italic" style={{ color: 'var(--text-muted)' }}>{current.meaning_en}</p>
             )}
             {current.example && (
-              <div className="w-full mt-2 p-3 bg-gray-50 rounded-xl text-left">
-                <p className="text-[16px] text-gray-700">{current.example}</p>
+              <div className="w-full mt-2 p-4 rounded-xl text-left"
+                   style={{ background: 'var(--bg-muted)', border: '1px solid var(--border)' }}>
+                <p className="text-base" style={{ color: 'var(--text-primary)' }}>{current.example}</p>
                 {current.example_vi && (
-                  <p className="text-[14px] text-gray-400 mt-1">{current.example_vi}</p>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>{current.example_vi}</p>
                 )}
               </div>
             )}
             {current.notes && (
-              <p className="text-[14px] text-gray-400 italic mt-1">{current.notes}</p>
+              <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>{current.notes}</p>
             )}
           </>
         )}
       </div>
 
       {/* Rating buttons — chỉ hiện sau khi flip */}
-      <div className={`flex gap-2 mt-3 transition-opacity ${flipped ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className={`flex gap-3 mt-4 transition-opacity ${flipped ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         {RATINGS.map(({ value, label, color }) => (
           <button
             key={value}
             onClick={() => rate(value)}
             disabled={saving}
-            className={`flex-1 py-2 text-[13px] rounded-xl border font-medium
+            className={`flex-1 py-3 text-sm rounded-xl border font-medium
                         transition-colors disabled:opacity-50 ${color}`}
           >
             {label}
@@ -182,10 +182,13 @@ export default function FlashcardSession({ entries }) {
 
       {/* Skip khi chưa flip */}
       {!flipped && (
-        <div className="flex justify-center mt-3">
+        <div className="flex justify-center mt-4">
           <button
             onClick={() => rate('skip')}
-            className="text-[12px] text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-sm transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             Bỏ qua →
           </button>

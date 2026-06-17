@@ -1,0 +1,65 @@
+/* ============================================================
+   ChineseKit Design Tokens
+   Palette G — Pink × Violet Duo
+   Primary:   #BE185D (pink-700) — CTA, streak, emotional
+   Secondary: #7C3AED (violet-600) — metadata, labels, info
+   ============================================================ */
+
+:root {
+  /* ── Brand Colors ─────────────────────────────────────── */
+  --pink:          #BE185D;
+  --pink-hover:    #9D174D;   /* pink-800 */
+  --pink-soft:     #FCE7F3;   /* pink-100 */
+  --pink-border:   #F9A8D4;   /* pink-300 */
+
+  --violet:        #7C3AED;
+  --violet-hover:  #6D28D9;   /* violet-700 */
+  --violet-soft:   #EDE9FE;   /* violet-100 */
+  --violet-border: #C4B5FD;   /* violet-300 */
+
+  /* ── Surfaces ─────────────────────────────────────────── */
+  --bg-base:       #FDF4FF;   /* page background — tím hồng cực nhạt */
+  --bg-surface:    #FFFFFF;   /* card, sidebar */
+  --bg-muted:      #F9F0FB;   /* input bg, hover bg */
+
+  /* ── Borders ──────────────────────────────────────────── */
+  --border:        #EDD9F5;   /* card border, divider */
+  --border-strong: #D8B4E8;   /* focus ring adjacent */
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --text-primary:   #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-muted:     #9B9B9B;
+  --text-pink:      #BE185D;
+  --text-violet:    #7C3AED;
+
+  /* ── Semantic ─────────────────────────────────────────── */
+  --success:        #059669;  /* emerald-600 */
+  --success-soft:   #D1FAE5;  /* emerald-100 */
+  --warning:        #D97706;  /* amber-600 */
+  --warning-soft:   #FEF3C7;  /* amber-100 */
+  --error:          #DC2626;  /* red-600 */
+  --error-soft:     #FEE2E2;  /* red-100 */
+
+  /* ── Flashcard rating ─────────────────────────────────── */
+  --rating-hard:    #D97706;  /* warning amber */
+  --rating-ok:      #059669;  /* success green */
+  --rating-easy:    #7C3AED;  /* violet — phân biệt với green/amber */
+
+  /* ── Layout ───────────────────────────────────────────── */
+  --sidebar-w:      260px;
+  --radius-sm:      8px;
+  --radius-md:      12px;
+  --radius-lg:      16px;
+  --radius-full:    9999px;
+
+  /* ── Font ─────────────────────────────────────────────── */
+  /* Injected bởi next/font/google qua CSS variables */
+  --font-sans:      var(--font-inter), system-ui, sans-serif;
+  --font-hanzi:     var(--font-noto), 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* ── Shadows ──────────────────────────────────────────── */
+  --shadow-sm:      0 1px 3px rgba(124, 58, 237, 0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:      0 4px 12px rgba(124, 58, 237, 0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-card:    0 1px 4px rgba(190, 24, 93, 0.06), 0 1px 2px rgba(0,0,0,0.04);
+}

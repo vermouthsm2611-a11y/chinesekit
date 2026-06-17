@@ -44,7 +44,7 @@ export default function EditSongForm({ song, lines, action }) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-[12px] font-medium text-gray-600">YouTube URL</label>
+          <label className="text-[13px] font-medium text-gray-600">YouTube URL</label>
           <input name="youtube_url" type="url" defaultValue={song.youtube_url ?? ''} className="input" placeholder="https://youtube.com/watch?v=..." />
         </div>
 
@@ -66,19 +66,19 @@ export default function EditSongForm({ song, lines, action }) {
             <div className="grid grid-cols-2 gap-3">
               {/* Hanzi — read only */}
               <div className="flex flex-col gap-1">
-                <label className="text-[12px] text-gray-400">Tiếng Trung (không thể sửa)</label>
+                <label className="text-[13px] text-gray-400">Tiếng Trung (không thể sửa)</label>
                 <textarea
                   readOnly
                   value={lines.map(l => l.hanzi).join('\n')}
                   rows={Math.min(lines.length + 2, 20)}
                   className="input resize-none font-mono text-[14px] leading-relaxed bg-gray-50 text-gray-500 cursor-default"
                 />
-                <p className="text-[12px] text-gray-400">{lines.length} dòng</p>
+                <p className="text-[13px] text-gray-400">{lines.length} dòng</p>
               </div>
 
               {/* Vietsub — editable */}
               <div className="flex flex-col gap-1">
-                <label className="text-[12px] text-gray-400">Vietsub (sửa tại đây)</label>
+                <label className="text-[13px] text-gray-400">Vietsub (sửa tại đây)</label>
                 <textarea
                   value={vietText}
                   onChange={e => setVietText(e.target.value)}
@@ -86,11 +86,11 @@ export default function EditSongForm({ song, lines, action }) {
                   className="input resize-none text-[14px] leading-relaxed"
                   placeholder="Mỗi dòng tương ứng 1 dòng tiếng Trung..."
                 />
-                <p className="text-[12px] text-gray-400">{vietLines} dòng</p>
+                <p className="text-[13px] text-gray-400">{vietLines} dòng</p>
               </div>
             </div>
 
-            <p className="text-[12px] text-gray-400">
+            <p className="text-[13px] text-gray-400">
               💡 Giữ số dòng bằng nhau. Dòng trống = không có vietsub cho dòng đó.
             </p>
           </div>
