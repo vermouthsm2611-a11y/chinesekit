@@ -1,8 +1,20 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import PinyinText from '@/components/ui/PinyinText'
+
+const PAGE_SIZE = 50
+
+// Fisher-Yates — unbiased shuffle
+function shuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
 // Highlight match trong search — trả về React nodes
 function highlight(text, query) {
@@ -21,7 +33,7 @@ function highlight(text, query) {
 }
 
 // Lấy object ví dụ đầu tiên — trả về { hanzi, pinyin, vi } hoặc null
-// Fallback về field example cũ (chỉ có hanzi) nếu chưa migrate
+// Fallback về field example cũ nếu chưa migrate
 function getFirstExample(entry) {
   if (entry.examples?.length) return entry.examples[0]
   if (entry.example)          return { hanzi: entry.example, pinyin: null, vi: null }
@@ -29,10 +41,17 @@ function getFirstExample(entry) {
 }
 
 export default function VocabList({ entries }) {
-  const [search,    setSearch] = useState('')
-  const [srcFilter, setSrc]    = useState('all')
-  const [sort,      setSort]   = useState('newest')
+  const [search,      setSearch]      = useState('')
+  const [srcFilter,   setSrc]         = useState('all')
+  const [sort,        setSort]        = useState('newest')
+  // shuffleSeed tăng mỗi lần click "Random" khi đã ở random → trigger re-shuffle
+  const [shuffleSeed, setShuffleSeed] = useState(0)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
+  // sentinel ref cho IntersectionObserver
+  const sentinelRef = useRef(null)
+
+  // ── Filter + Sort ──────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
 
@@ -46,20 +65,55 @@ export default function VocabList({ entries }) {
       return matchSearch && matchSrc
     })
 
-    result.sort((a, b) => {
-      if (sort === 'az')     return a.hanzi.localeCompare(b.hanzi, 'zh')
-      if (sort === 'oldest') return new Date(a.created_at) - new Date(b.created_at)
-      return new Date(b.created_at) - new Date(a.created_at)
-    })
+    if (sort === 'az')     result.sort((a, b) => a.hanzi.localeCompare(b.hanzi, 'zh'))
+    else if (sort === 'oldest') result.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    else if (sort === 'newest') result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    else if (sort === 'random') return shuffle(result) // shuffleSeed trong deps → re-run khi seed tăng
 
     return result
-  }, [entries, search, srcFilter, sort])
+  }, [entries, search, srcFilter, sort, shuffleSeed]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Reset về trang đầu khi filter/sort thay đổi
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE)
+  }, [search, srcFilter, sort, shuffleSeed])
+
+  // ── Infinite scroll — IntersectionObserver ────────────────────────────────
+  useEffect(() => {
+    const el = sentinelRef.current
+    // Không attach nếu đã load hết
+    if (!el || visibleCount >= filtered.length) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleCount(n => Math.min(n + PAGE_SIZE, filtered.length))
+        }
+      },
+      { rootMargin: '300px' } // pre-load trước khi chạm đáy 300px
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [filtered.length, visibleCount])
+
+  // ── Slice visible items ────────────────────────────────────────────────────
+  const visible   = filtered.slice(0, visibleCount)
+  const hasMore   = visibleCount < filtered.length
   const isFiltered = search || srcFilter !== 'all'
+
+  // ── Sort change handler — handle re-shuffle khi đã ở random ───────────────
+  function handleSortChange(val) {
+    if (val === 'random' && sort === 'random') {
+      setShuffleSeed(s => s + 1) // giữ sort='random', chỉ tăng seed để re-shuffle
+    } else {
+      setSort(val)
+    }
+  }
 
   return (
     <div>
-      {/* ── Toolbar — sticky khi scroll ─────────────────── */}
+      {/* ── Toolbar sticky ────────────────────────────────────────────────── */}
       <div className="sticky top-0 z-10 pb-3 flex flex-col gap-2"
            style={{ background: 'var(--bg-base)' }}>
         <input
@@ -71,7 +125,6 @@ export default function VocabList({ entries }) {
                      rounded-lg bg-white outline-none focus:border-[var(--pink)] transition-colors"
         />
 
-        {/* Filter row — cuộn ngang mobile, wrap desktop */}
         <div className="flex gap-2 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible
                         [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <FilterGroup
@@ -87,37 +140,40 @@ export default function VocabList({ entries }) {
           />
           <FilterGroup
             value={sort}
-            onChange={setSort}
+            onChange={handleSortChange}
             options={[
               { value: 'newest', label: '↓ Mới nhất' },
               { value: 'oldest', label: '↑ Cũ nhất' },
               { value: 'az',     label: 'A–Z' },
+              { value: 'random', label: '🔀 Random' },
             ]}
           />
         </div>
       </div>
 
-      {/* ── Count ───────────────────────────────────────── */}
-      <p className="text-[14px] text-gray-400 mb-3">
-        {filtered.length} từ{isFiltered ? ' (đã lọc)' : ''}
+      {/* ── Count ─────────────────────────────────────────────────────────── */}
+      <p className="text-[14px] mb-3" style={{ color: 'var(--text-muted)' }}>
+        {hasMore
+          ? `Hiển thị ${visibleCount} / ${filtered.length} từ${isFiltered ? ' (đã lọc)' : ''}`
+          : `${filtered.length} từ${isFiltered ? ' (đã lọc)' : ''}`
+        }
       </p>
 
-      {/* ── List ────────────────────────────────────────── */}
-      {filtered.length === 0 ? (
-        <div className="card text-center py-10 text-gray-400 text-sm">
+      {/* ── List ──────────────────────────────────────────────────────────── */}
+      {visible.length === 0 ? (
+        <div className="card text-center py-10 text-sm" style={{ color: 'var(--text-muted)' }}>
           Không tìm thấy từ nào.
         </div>
       ) : (
         <>
-          {/* ── MOBILE: card rows ─────────────────────────── */}
+          {/* MOBILE: card rows */}
           <div className="md:hidden card p-0 overflow-hidden divide-y divide-gray-50">
-            {filtered.map((entry) => (
+            {visible.map((entry) => (
               <MobileRow key={entry.id} entry={entry} search={search} />
             ))}
           </div>
 
-          {/* ── DESKTOP: table full-width ───────────────────── */}
-          {/* Layout: Hanzi | Pinyin | Nghĩa | Ví dụ hanzi | Ví dụ pinyin/vi | Nguồn | Sửa */}
+          {/* DESKTOP: table */}
           <div className="hidden md:block card p-0 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-[15px]">
@@ -135,42 +191,32 @@ export default function VocabList({ entries }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filtered.map((entry) => {
+                  {visible.map((entry) => {
                     const ex = getFirstExample(entry)
                     return (
                       <tr key={entry.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-4 py-3 hanzi text-[22px] whitespace-nowrap align-middle">
                           {highlight(entry.hanzi, search)}
                         </td>
-                        {/* Hán-Việt — muted, lowercase */}
                         <td className="px-4 py-3 text-gray-400 align-middle lowercase">
                           {entry.hv || '—'}
                         </td>
-                        {/* Pinyin — tone colored, lowercase */}
                         <td className="px-4 py-3 align-middle lowercase">
                           {entry.pinyin
                             ? <PinyinText pinyin={entry.pinyin} />
                             : <span className="text-gray-200">—</span>}
                         </td>
-                        {/* Nghĩa — đen, lowercase */}
                         <td className="px-4 py-3 text-[16px] text-gray-900 align-middle lowercase font-medium">
                           {highlight(entry.meaning_vi, search)}
                         </td>
-
-                        {/* Ghi chú — đen */}
                         <td className="px-4 py-3 text-gray-900 align-middle lowercase">
                           {entry.notes
                             ? <p className="line-clamp-2">{entry.notes}</p>
-                            : <span className="text-gray-200">—</span>
-                          }
+                            : <span className="text-gray-200">—</span>}
                         </td>
-
-                        {/* Ví dụ hanzi — đen */}
                         <td className="px-4 py-3 hanzi text-[17px] text-gray-700 align-middle">
                           {ex ? ex.hanzi : <span className="text-gray-200">—</span>}
                         </td>
-
-                        {/* Ví dụ pinyin + vi — muted, lowercase */}
                         <td className="px-4 py-3 align-middle lowercase">
                           {ex ? (
                             <div className="flex flex-col gap-0.5">
@@ -181,11 +227,7 @@ export default function VocabList({ entries }) {
                             <span className="text-gray-200">—</span>
                           )}
                         </td>
-
-                        {/* Nguồn — muted nhỏ */}
-                        <td className="px-4 py-3 align-middle">
-                          {entry.source}
-                        </td>
+                        <td className="px-4 py-3 align-middle">{entry.source}</td>
                         <td className="px-4 py-3 align-middle">
                           <Link
                             href={`/vocab/${entry.id}`}
@@ -201,6 +243,13 @@ export default function VocabList({ entries }) {
               </table>
             </div>
           </div>
+
+          {/* Sentinel + loading indicator */}
+          {hasMore && (
+            <div ref={sentinelRef} className="flex justify-center py-6">
+              <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--pink)] animate-spin" />
+            </div>
+          )}
         </>
       )}
     </div>
@@ -216,7 +265,6 @@ function MobileRow({ entry, search }) {
       href={`/vocab/${entry.id}`}
       className="block px-4 py-3.5 hover:bg-gray-50 transition-colors active:bg-gray-100"
     >
-      {/* Dòng 1: hanzi + pinyin inline */}
       <div className="flex items-baseline justify-between gap-2 mb-1">
         <span className="hanzi text-[22px] leading-tight text-gray-900">
           {highlight(entry.hanzi, search)}
@@ -226,12 +274,10 @@ function MobileRow({ entry, search }) {
         )}
       </div>
 
-      {/* Dòng 2: nghĩa */}
       <p className="text-[16px] text-gray-800 font-medium mb-2 lowercase">
         {highlight(entry.meaning_vi, search)}
       </p>
 
-      {/* Ví dụ block — border-left accent, 3 dòng */}
       {ex && (
         <div className="border-l-2 border-gray-100 pl-2.5 flex flex-col gap-0.5">
           <p className="hanzi text-[17px] text-gray-600">{ex.hanzi}</p>
@@ -247,7 +293,7 @@ function MobileRow({ entry, search }) {
   )
 }
 
-// ── FilterGroup ──────────────────────────────────────────────────────────────
+// ── FilterGroup ───────────────────────────────────────────────────────────────
 function FilterGroup({ value, onChange, options }) {
   return (
     <div className="flex gap-1 rounded-lg p-1 flex-shrink-0 border"

@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import PinyinText from '@/components/ui/PinyinText'
+
+const PAGE_SIZE = 30
 
 const SOURCE_LABELS = {
   manual: '✏️ Manual',
@@ -12,8 +14,11 @@ const SOURCE_LABELS = {
 }
 
 export default function PatternList({ patterns }) {
-  const [search,   setSearch]   = useState('')
-  const [expanded, setExpanded] = useState(null)
+  const [search,       setSearch]       = useState('')
+  const [expanded,     setExpanded]     = useState(null)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+
+  const sentinelRef = useRef(null)
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
@@ -25,6 +30,33 @@ export default function PatternList({ patterns }) {
       p.examples?.some(e => e.hanzi?.includes(q) || e.vi?.toLowerCase().includes(q))
     )
   }, [patterns, search])
+
+  // Reset về trang đầu khi search thay đổi
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE)
+    setExpanded(null) // đóng accordion đang mở tránh layout jump
+  }, [search])
+
+  // ── Infinite scroll ────────────────────────────────────────────────────────
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el || visibleCount >= filtered.length) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleCount(n => Math.min(n + PAGE_SIZE, filtered.length))
+        }
+      },
+      { rootMargin: '300px' }
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [filtered.length, visibleCount])
+
+  const visible = filtered.slice(0, visibleCount)
+  const hasMore = visibleCount < filtered.length
 
   if (patterns.length === 0) {
     return (
@@ -40,7 +72,7 @@ export default function PatternList({ patterns }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {/* sticky: search bar bám đầu viewport khi scroll qua list accordion dài */}
+      {/* Sticky search bar */}
       <div className="sticky top-0 z-10 pb-2" style={{ background: 'var(--bg-base)' }}>
         <input
           type="text"
@@ -51,17 +83,35 @@ export default function PatternList({ patterns }) {
         />
       </div>
 
-      {filtered.length === 0 ? (
-        <p className="text-sm mt-4" style={{ color: 'var(--text-muted)' }}>Không tìm thấy kết quả nào.</p>
+      {/* Count */}
+      {search && (
+        <p className="text-[14px]" style={{ color: 'var(--text-muted)' }}>
+          {filtered.length} kết quả
+        </p>
+      )}
+
+      {visible.length === 0 ? (
+        <p className="text-sm mt-4" style={{ color: 'var(--text-muted)' }}>
+          Không tìm thấy kết quả nào.
+        </p>
       ) : (
-        filtered.map(p => (
-          <PatternCard
-            key={p.id}
-            pattern={p}
-            isOpen={expanded === p.id}
-            onToggle={() => setExpanded(expanded === p.id ? null : p.id)}
-          />
-        ))
+        <>
+          {visible.map(p => (
+            <PatternCard
+              key={p.id}
+              pattern={p}
+              isOpen={expanded === p.id}
+              onToggle={() => setExpanded(expanded === p.id ? null : p.id)}
+            />
+          ))}
+
+          {/* Sentinel + spinner */}
+          {hasMore && (
+            <div ref={sentinelRef} className="flex justify-center py-6">
+              <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--pink)] animate-spin" />
+            </div>
+          )}
+        </>
       )}
     </div>
   )
@@ -81,15 +131,12 @@ function PatternCard({ pattern, isOpen, onToggle }) {
 
   return (
     <div className="card p-0 overflow-hidden">
-      {/* Header — horizontal layout trên desktop để tránh khoảng trống dọc */}
       <button
         type="button"
         onClick={onToggle}
         className="w-full px-5 py-4 text-left transition-colors hover:bg-gray-50"
       >
-        {/* Desktop: grid 2 cột bằng nhau — cùng cấu trúc row hanzi/pinyin/nghĩa */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-
           {/* Col 1: cấu trúc */}
           <div>
             <p className="hanzi text-[26px] leading-snug" style={{ color: 'var(--text-primary)' }}>
@@ -104,7 +151,7 @@ function PatternCard({ pattern, isOpen, onToggle }) {
             </p>
           </div>
 
-          {/* Col 2: ví dụ đầu tiên — cùng row structure, cùng size */}
+          {/* Col 2: ví dụ đầu tiên */}
           <div className="md:border-l md:pl-5" style={{ borderColor: 'var(--border)' }}>
             {firstExample ? (
               <>
@@ -125,7 +172,6 @@ function PatternCard({ pattern, isOpen, onToggle }) {
           </div>
         </div>
 
-        {/* Meta + expand — đặt ngoài grid, căn phải */}
         <div className="flex items-center justify-end gap-2 mt-3">
           {pattern.source && pattern.source !== 'manual' && (
             <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
@@ -141,7 +187,7 @@ function PatternCard({ pattern, isOpen, onToggle }) {
         </div>
       </button>
 
-      {/* Expanded: ví dụ còn lại + ghi chú */}
+      {/* Expanded content */}
       {isOpen && hasMore && (
         <div className="border-t px-5 py-4 flex flex-col gap-4"
              style={{ borderColor: 'var(--border)', background: 'var(--bg-muted)' }}>
@@ -180,7 +226,6 @@ function PatternCard({ pattern, isOpen, onToggle }) {
         </div>
       )}
 
-      {/* Edit link khi không có extra content */}
       {!hasMore && (
         <div className="px-5 pb-3 flex justify-end">
           <Link href={`/vocab/${pattern.id}?back=/patterns`}

@@ -5,48 +5,53 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-// Nhận filter từ URL params: /flashcard?type=vocab&source=music
+// Interval (ngày) theo bucket: bucket 1 → 1 ngày, 2 → 3 ngày, 3 → 7 ngày
+export const BUCKET_INTERVALS = [0, 1, 3, 7]
+
 export default async function FlashcardPage({ searchParams }) {
   const type   = searchParams?.type   ?? 'all'
   const source = searchParams?.source ?? 'all'
 
-  let query = supabase
+  // ── Fetch entries + entry_progress song song ────────────────────────────
+  let entryQuery = supabase
     .from('entries')
     .select('id, type, hanzi, pinyin, hv, meaning_vi, meaning_en, example, example_vi, notes')
 
-  if (type   !== 'all') query = query.eq('type',   type)
-  if (source !== 'all') query = query.eq('source', source)
+  if (type   !== 'all') entryQuery = entryQuery.eq('type',   type)
+  if (source !== 'all') entryQuery = entryQuery.eq('source', source)
 
-  const [{ data: allEntries }, { flashcardCount }, { data: reviewLog }] = await Promise.all([
-    query,
+  const today = new Date().toISOString().split('T')[0] // 'YYYY-MM-DD'
+
+  const [{ data: allEntries }, { flashcardCount }, { data: progressRows }] = await Promise.all([
+    entryQuery,
     getSettings(),
-    // Lấy toàn bộ lịch sử review để tính score
-    supabase.from('review_log').select('entry_id, result'),
+    // Chỉ cần bucket + next_review — không cần toàn bộ review_log
+    supabase.from('entry_progress').select('entry_id, bucket, next_review'),
   ])
 
-  // ── Score-based priority ─────────────────────────────────────────────────
-  // score = incorrect*2 - correct  (incorrect nặng hơn)
-  // skip  = +1 (chưa chắc → vẫn cần ôn)
-  // Chưa ôn bao giờ → score = null → ưu tiên cao nhất
-  const scoreMap = {}
-  reviewLog?.forEach(({ entry_id, result }) => {
-    if (scoreMap[entry_id] === undefined) scoreMap[entry_id] = 0
-    if (result === 'incorrect') scoreMap[entry_id] += 2
-    else if (result === 'correct') scoreMap[entry_id] -= 1
-    else if (result === 'skip')    scoreMap[entry_id] += 1
+  // ── Build progressMap: entry_id → { bucket, next_review } ──────────────
+  // Dùng trong page để filter + sort, và truyền xuống FlashcardSession để tính bucket mới
+  const progressMap = {}
+  progressRows?.forEach(row => {
+    progressMap[row.entry_id] = { bucket: row.bucket, next_review: row.next_review }
   })
 
-  const sorted = [...(allEntries ?? [])].sort((a, b) => {
-    const sa = scoreMap[a.id]   // undefined = chưa ôn
-    const sb = scoreMap[b.id]
-    // null/undefined → float lên đầu
-    if (sa === undefined && sb === undefined) return 0
-    if (sa === undefined) return -1
-    if (sb === undefined) return 1
-    return sb - sa  // score cao hơn lên trước
+  // ── Filter: chỉ lấy entries đến hạn ôn hôm nay hoặc chưa học lần nào ──
+  const dueEntries = (allEntries ?? []).filter(entry => {
+    const progress = progressMap[entry.id]
+    if (!progress) return true                    // chưa có trong entry_progress → ưu tiên cao nhất
+    return progress.next_review <= today          // đến hạn hoặc quá hạn
   })
 
-  // Slice theo flashcard_count — đã sort theo độ khó
+  // ── Sort: B1 → B2 → B3 → chưa học (float lên đầu) ─────────────────────
+  const sorted = [...dueEntries].sort((a, b) => {
+    const pa = progressMap[a.id]
+    const pb = progressMap[b.id]
+    const ba = pa?.bucket ?? 0   // 0 = chưa học, float lên đầu
+    const bb = pb?.bucket ?? 0
+    return ba - bb               // bucket nhỏ hơn (yếu hơn) lên trước
+  })
+
   const entries = sorted.slice(0, flashcardCount)
 
   return (
@@ -56,25 +61,33 @@ export default async function FlashcardPage({ searchParams }) {
         <Link href="/" className="btn">← Dashboard</Link>
       </div>
 
-      {/* Filter session trước khi bắt đầu */}
       <SessionFilter currentType={type} currentSource={source} />
 
       {entries.length > 0 ? (
-        <FlashcardSession entries={entries} />
+        <FlashcardSession
+          entries={entries}
+          progressMap={progressMap}
+          today={today}
+        />
       ) : (
-        <div className="card text-center py-16 text-gray-400">
-          <p className="text-4xl mb-3">📭</p>
-          <p className="text-sm">Không có từ nào phù hợp.</p>
-          <Link href="/vocab/new" className="btn btn-primary mt-4 inline-flex">
-            + Thêm từ đầu tiên
-          </Link>
+        // Empty state — hôm nay không có gì cần ôn
+        <div className="card text-center py-16" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-4xl mb-3">🎉</p>
+          <p className="text-lg font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+            Hôm nay không có từ nào cần ôn!
+          </p>
+          <p className="text-sm mb-6">Quay lại ngày mai hoặc thêm từ mới.</p>
+          <div className="flex gap-3 justify-center">
+            <Link href="/vocab/new" className="btn btn-primary">+ Thêm từ mới</Link>
+            <Link href="/vocab" className="btn">Xem từ vựng</Link>
+          </div>
         </div>
       )}
     </div>
   )
 }
 
-// ── Filter bar — chọn trước khi bắt đầu session ─────────────────────────────
+// ── Filter bar ───────────────────────────────────────────────────────────────
 function SessionFilter({ currentType, currentSource }) {
   const types   = [['all','Tất cả'], ['vocab','Từ vựng'], ['pattern','Cấu trúc']]
   const sources = [['all','Mọi nguồn'], ['douyin','📱 Douyin'], ['music','🎵 Nhạc'], ['game','🎮 Game'], ['manual','✏️ Manual']]
@@ -86,7 +99,6 @@ function SessionFilter({ currentType, currentSource }) {
     return `/flashcard${p.toString() ? '?' + p : ''}`
   }
 
-  // Mobile: cuộn ngang thay vì wrap — tránh 2-3 dòng nút trên màn nhỏ
   return (
     <div className="flex gap-2 mb-5 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible
                     [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
