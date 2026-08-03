@@ -41,7 +41,7 @@ export default async function LyricsListPage() {
             >
               <div className="w-14 h-14 rounded-xl flex items-center justify-center
                               text-2xl flex-shrink-0"
-                   style={{ background: 'var(--pink-soft)' }}
+                   style={{ background: 'var(--primary-soft)' }}
               >
                 🎵
               </div>

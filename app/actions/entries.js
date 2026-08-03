@@ -17,6 +17,11 @@ function parseExamples(formData) {
   } catch { return [] }
 }
 
+// entries → sentences: bảng sentences chỉ có hanzi / pinyin / meaning_vi / notes
+function toSentence({ hanzi, pinyin, meaning_vi, notes }) {
+  return { hanzi, pinyin, meaning_vi, notes }
+}
+
 export async function addEntry(prevState, formData) {
   const payload = {
     type:       formData.get('type')       || 'vocab',
@@ -33,6 +38,15 @@ export async function addEntry(prevState, formData) {
   // Validate — trả về error thay vì throw để client hiện toast thay vì error overlay
   if (!payload.hanzi)      return { error: 'Hanzi là bắt buộc.' }
   if (!payload.meaning_vi) return { error: 'Nghĩa tiếng Việt là bắt buộc.' }
+
+  // Loại "Câu" không thuộc entries — lưu thẳng vào bảng sentences
+  if (payload.type === 'sentence') {
+    const { error } = await supabase.from('sentences').insert(toSentence(payload))
+    if (error) return { error: `Lỗi database: ${error.message}` }
+
+    revalidatePath('/sentences')
+    redirect('/sentences')
+  }
 
   const { error } = await supabase.from('entries').insert(payload)
   if (error) return { error: `Lỗi database: ${error.message}` }
@@ -61,6 +75,22 @@ export async function updateEntry(id, prevState, formData) {
 
   if (!payload.hanzi)      return { error: 'Hanzi là bắt buộc.' }
   if (!payload.meaning_vi) return { error: 'Nghĩa tiếng Việt là bắt buộc.' }
+
+  // Đổi loại sang "Câu" → move sang bảng sentences rồi xoá khỏi entries.
+  // Insert trước, delete sau: nếu lỗi giữa chừng thì dư bản ghi, không mất data.
+  if (payload.type === 'sentence') {
+    const { error: insertErr } = await supabase.from('sentences').insert(toSentence(payload))
+    if (insertErr) return { error: `Lỗi database: ${insertErr.message}` }
+
+    const { error: deleteErr } = await supabase.from('entries').delete().eq('id', id)
+    if (deleteErr) return { error: `Đã tạo câu nhưng không xoá được entry cũ: ${deleteErr.message}` }
+
+    revalidatePath('/sentences')
+    revalidatePath('/vocab')
+    revalidatePath('/patterns')
+    revalidatePath('/')
+    redirect('/sentences')
+  }
 
   const { error } = await supabase.from('entries').update(payload).eq('id', id)
   if (error) return { error: `Lỗi database: ${error.message}` }

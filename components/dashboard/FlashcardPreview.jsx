@@ -20,7 +20,7 @@ export default function FlashcardPreview({ entry, reviewedToday, dailyGoal = 20 
           href="/flashcard"
           className="text-[13px] transition-colors"
           style={{ color: 'var(--text-muted)' }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--violet)'}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--secondary)'}
           onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
         >
           Bắt đầu session →
@@ -39,7 +39,7 @@ export default function FlashcardPreview({ entry, reviewedToday, dailyGoal = 20 
               border: '1px solid var(--border)',
               background: 'var(--bg-muted)',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--violet-soft)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--secondary-soft)'}
             onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-muted)'}
           >
             {!flipped ? (
@@ -84,7 +84,7 @@ export default function FlashcardPreview({ entry, reviewedToday, dailyGoal = 20 
               {[
                 { label: 'Khó',   bg: 'var(--warning-soft)',  color: 'var(--warning)' },
                 { label: 'Ổn',    bg: 'var(--success-soft)',  color: 'var(--success)' },
-                { label: 'Dễ',    bg: 'var(--violet-soft)',   color: 'var(--violet)' },
+                { label: 'Dễ',    bg: 'var(--secondary-soft)',   color: 'var(--secondary)' },
               ].map(({ label, bg, color }) => (
                 <button
                   key={label}

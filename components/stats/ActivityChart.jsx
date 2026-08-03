@@ -34,8 +34,8 @@ export default function ActivityChart({ days }) {
                     count === 0
                       ? 'bg-gray-100'
                       : isToday
-                        ? 'bg-[var(--pink)]'
-                        : 'bg-[var(--pink-border)] group-hover:bg-[var(--pink)]'
+                        ? 'bg-[var(--primary)]'
+                        : 'bg-[var(--primary-border)] group-hover:bg-[var(--primary)]'
                   }`}
                   style={{ height: `${Math.max(heightPct * 1.1, count > 0 ? 4 : 2)}px` }}
                 />

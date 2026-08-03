@@ -23,8 +23,8 @@ body {
 /* ── Scrollbar ────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-muted); border-radius: 8px; }
-::-webkit-scrollbar-thumb { background: var(--pink-border); border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: var(--pink); }
+::-webkit-scrollbar-thumb { background: var(--primary-border); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 /* ── Typography helpers ───────────────────────────────────── */
 
@@ -68,13 +68,13 @@ body {
 .badge {
   @apply inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full;
 }
-.badge-vocab   { background: var(--violet-soft); color: var(--text-violet); }
-.badge-pattern { background: var(--pink-soft);   color: var(--text-pink); }
+.badge-vocab   { background: var(--secondary-soft); color: var(--text-accent-2); }
+.badge-pattern { background: var(--primary-soft);   color: var(--text-accent); }
 .badge-song    { background: var(--success-soft); color: var(--success); }
 
 /* Source badges — tách màu theo origin */
 .badge-douyin  { @apply bg-blue-50 text-blue-700; }
-.badge-music   { background: var(--violet-soft); color: var(--text-violet); }
+.badge-music   { background: var(--secondary-soft); color: var(--text-accent-2); }
 .badge-game    { @apply bg-amber-50 text-amber-700; }
 .badge-manual  { @apply bg-gray-100 text-gray-600; }
 
@@ -96,27 +96,27 @@ body {
   transform: scale(0.98);
 }
 
-/* Primary CTA — pink */
+/* Primary CTA — gradient xanh navy (theo trang cũ) */
 .btn-primary {
-  background: var(--pink);
-  border-color: var(--pink);
+  background: var(--primary-gradient);
+  border-color: var(--primary);
   color: #fff;
 }
 .btn-primary:hover {
-  background: var(--pink-hover);
-  border-color: var(--pink-hover);
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
   color: #fff;
 }
 
 /* Secondary — violet outline */
 .btn-secondary {
-  border-color: var(--violet-border);
-  color: var(--text-violet);
+  border-color: var(--secondary-border);
+  color: var(--text-accent-2);
 }
 .btn-secondary:hover {
-  background: var(--violet-soft);
-  border-color: var(--violet);
-  color: var(--text-violet);
+  background: var(--secondary-soft);
+  border-color: var(--secondary);
+  color: var(--text-accent-2);
 }
 
 /* Danger */
@@ -141,7 +141,7 @@ body {
   color: var(--text-muted);
 }
 .input:focus {
-  border-color: var(--violet);
+  border-color: var(--secondary);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
 }
 
@@ -168,14 +168,14 @@ textarea.input {
 }
 .progress-bar-fill {
   @apply h-full rounded-full;
-  background: linear-gradient(90deg, var(--pink), var(--violet));
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
   transition: width 600ms ease;
 }
 
 /* ── Tone colors (pinyin) ─────────────────────────────────── */
-/* Dùng cho tính năng tone colors trong tương lai */
-.tone-1 { color: #BE185D; }  /* flat     — pink primary */
+/* Không dùng nữa — pinyin hiện render 1 màu (xem PinyinText.jsx). Giữ lại phòng khi bật lại tính năng. */
+.tone-1 { color: #42578b; }  /* flat     — muted navy primary */
 .tone-2 { color: #D97706; }  /* rising   — amber */
 .tone-3 { color: #059669; }  /* dipping  — green */
-.tone-4 { color: #7C3AED; }  /* falling  — violet */
+.tone-4 { color: #4F46E5; }  /* falling  — indigo (tránh trùng navy secondary) */
 .tone-5 { color: #6B7280; }  /* neutral  — gray */

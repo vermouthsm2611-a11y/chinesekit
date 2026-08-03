@@ -45,7 +45,7 @@ export default function EntryForm({ action, initial, back }) {
       const h = searchParams.get('hanzi') ?? ''
       const t = searchParams.get('type')  ?? ''
       if (h) setHanzi(h)
-      if (t === 'pattern' || t === 'vocab') setTypeVal(t)
+      if (t === 'pattern' || t === 'vocab' || t === 'sentence') setTypeVal(t)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -75,7 +75,7 @@ export default function EntryForm({ action, initial, back }) {
   }
 
   const inputClass = `w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white
-                      outline-none focus:border-[var(--pink)] transition-colors`
+                      outline-none focus:border-[var(--primary)] transition-colors`
 
   return (
     <>
@@ -100,6 +100,7 @@ export default function EntryForm({ action, initial, back }) {
           >
             <option value="vocab">Từ vựng</option>
             <option value="pattern">Cấu trúc / Pattern</option>
+            <option value="sentence">Câu</option>
           </select>
         </div>
 
@@ -110,6 +111,15 @@ export default function EntryForm({ action, initial, back }) {
           <option value="game">🎮 Game</option>
         </Field>
       </div>
+
+      {/* Chọn "Câu" → bản ghi lưu sang bảng sentences (tab Câu), không nằm trong entries */}
+      {typeVal === 'sentence' && (
+        <p className="text-[13px] text-gray-500 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+          {isEdit
+            ? 'Khi lưu, mục này sẽ được chuyển sang tab Câu. Hán-Việt, nghĩa tiếng Anh và ví dụ sẽ không được giữ lại.'
+            : 'Mục này sẽ được lưu vào tab Câu. Chỉ giữ Hanzi, Pinyin, nghĩa tiếng Việt và ghi chú.'}
+        </p>
+      )}
 
       {/* Hanzi + Load */}
       <div className="flex flex-col gap-1">
@@ -122,7 +132,7 @@ export default function EntryForm({ action, initial, back }) {
               disabled={loading || !hasCJK}
               className="inline-flex items-center gap-1 text-[13px] px-2 py-0.5 rounded-md
                          border border-gray-200 bg-white text-gray-500
-                         hover:border-[var(--pink)] hover:text-[var(--pink)] transition-colors
+                         hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors
                          disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {loading
@@ -172,7 +182,7 @@ export default function EntryForm({ action, initial, back }) {
             onClick={addExample}
             className="inline-flex items-center gap-1 text-[13px] px-2.5 py-1 rounded-lg
                        border border-dashed border-gray-300 text-gray-500
-                       hover:border-[var(--pink)] hover:text-[var(--pink)] transition-colors"
+                       hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
           >
             + Thêm ví dụ
           </button>
@@ -258,7 +268,7 @@ function SubmitButton({ isEdit }) {
 
 function Field({ label, name, as = 'input', placeholder, defaultValue, children }) {
   const baseClass = `w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white
-                     outline-none focus:border-[var(--pink)] transition-colors`
+                     outline-none focus:border-[var(--primary)] transition-colors`
   return (
     <div className="flex flex-col gap-1">
       <label className="text-[13px] font-medium text-gray-600">{label}</label>

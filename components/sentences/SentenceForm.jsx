@@ -30,7 +30,7 @@ export default function SentenceForm({ action, initial }) {
   const hasCJK = /[一-鿿㐀-䶿]/.test(hanzi)
 
   const inputClass = `w-full px-3.5 py-2.5 text-[15px] border border-gray-200 rounded-lg bg-white
-                      outline-none focus:border-[var(--pink)] transition-colors`
+                      outline-none focus:border-[var(--primary)] transition-colors`
 
   return (
     <>
@@ -60,7 +60,7 @@ export default function SentenceForm({ action, initial }) {
               disabled={!hasCJK}
               className="inline-flex items-center gap-1 text-[13px] px-2 py-0.5 rounded-md
                          border border-gray-200 bg-white text-gray-500
-                         hover:border-[var(--pink)] hover:text-[var(--pink)] transition-colors
+                         hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors
                          disabled:opacity-40 disabled:cursor-not-allowed"
             >
               ⚡ Tự động

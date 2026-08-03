@@ -7,30 +7,30 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Pink primary — CTA, streak, emotional actions
-        pink: {
-          DEFAULT: '#BE185D',
-          hover:   '#9D174D',
-          soft:    '#FCE7F3',
-          border:  '#F9A8D4',
+        // Muted navy blue primary — CTA, streak, emotional actions
+        primary: {
+          DEFAULT: '#42578b',
+          hover:   '#36466f',
+          soft:    '#EEF1F7',
+          border:  '#A9B7D1',
         },
-        // Violet secondary — metadata, labels, info
-        violet: {
-          DEFAULT: '#7C3AED',
-          hover:   '#6D28D9',
-          soft:    '#EDE9FE',
-          border:  '#C4B5FD',
+        // Navy secondary — metadata, labels, info
+        secondary: {
+          DEFAULT: '#1E293B',
+          hover:   '#0F172A',
+          soft:    '#F1F5F9',
+          border:  '#CBD5E1',
         },
         // Surface tokens
         surface: {
-          base:    '#FDF4FF',
+          base:    '#F8FAFC',
           card:    '#FFFFFF',
-          muted:   '#F9F0FB',
+          muted:   '#F1F5F9',
         },
         // Border tokens
         border: {
-          DEFAULT: '#EDD9F5',
-          strong:  '#D8B4E8',
+          DEFAULT: '#E2E8F0',
+          strong:  '#CBD5E1',
         },
       },
       fontFamily: {
@@ -43,8 +43,8 @@ module.exports = {
         '2xl': '16px',
       },
       boxShadow: {
-        card: '0 1px 4px rgba(190, 24, 93, 0.06), 0 1px 2px rgba(0,0,0,0.04)',
-        md:   '0 4px 12px rgba(124, 58, 237, 0.08), 0 2px 4px rgba(0,0,0,0.04)',
+        card: '0 1px 4px rgba(66, 87, 139, 0.06), 0 1px 2px rgba(0,0,0,0.04)',
+        md:   '0 4px 12px rgba(30, 41, 59, 0.08), 0 2px 4px rgba(0,0,0,0.04)',
       },
     },
   },

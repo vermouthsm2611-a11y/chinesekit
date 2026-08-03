@@ -75,11 +75,12 @@ async function getDashboardData() {
     ? sampleEntries[Math.floor(Math.random() * sampleEntries.length)]
     : null
 
+  // Badge neutral 1 kiểu cho mọi nguồn — tránh rainbow blue/green/purple lệch tông với theme đỏ/navy
   const sourceCounts = [
-    { label: 'Douyin', emoji: '📱', color: 'bg-blue-50 text-blue-700',   count: cntDouyin ?? 0 },
-    { label: 'Nhạc',   emoji: '🎵', color: 'bg-green-50 text-green-700', count: cntMusic  ?? 0 },
-    { label: 'Game',   emoji: '🎮', color: 'bg-purple-50 text-purple-700', count: cntGame ?? 0 },
-    { label: 'Manual', emoji: '✏️', color: 'bg-gray-100 text-gray-600',  count: cntManual ?? 0 },
+    { label: 'Douyin', count: cntDouyin ?? 0 },
+    { label: 'Nhạc',   count: cntMusic  ?? 0 },
+    { label: 'Game',   count: cntGame ?? 0 },
+    { label: 'Manual', count: cntManual ?? 0 },
   ]
 
   return {
@@ -139,15 +140,15 @@ export default async function DashboardPage() {
         {/* Source breakdown — real counts */}
         <div className="card">
           <p className="text-[14px] font-medium mb-4" style={{ color: 'var(--text-primary)' }}>
-            📌 Nguồn học
+            Nguồn học
           </p>
           <div className="flex flex-col gap-3">
-            {sourceCounts.map(({ label, emoji, color, count }) => {
+            {sourceCounts.map(({ label, count }) => {
               const pct = totalEntries > 0 ? (count / totalEntries) * 100 : 0
               return (
                 <div key={label}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className={`badge ${color}`}>{emoji} {label}</span>
+                    <span className="badge" style={{ background: 'var(--bg-muted)', color: 'var(--text-secondary)' }}>{label}</span>
                     <span className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>
                       {count}
                     </span>

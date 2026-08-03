@@ -70,7 +70,7 @@ export default function WordPopup({ char, entries, pos, onClose }) {
                 <div className="flex justify-end mt-2">
                   <a
                     href={`/vocab/${entry.id}?back=${encodeURIComponent(window.location.pathname)}`}
-                    className="text-[13px] text-gray-400 hover:text-[var(--pink)] transition-colors"
+                    className="text-[13px] text-gray-400 hover:text-[var(--primary)] transition-colors"
                   >
                     ✏️ Sửa →
                   </a>

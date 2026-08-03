@@ -13,7 +13,7 @@ export default function RecentEntries({ entries }) {
 
       {entries.length === 0 ? (
         <p className="text-[13px] text-gray-400 py-4 text-center">
-          Chưa có từ nào — <Link href="/vocab/new" className="text-[var(--pink)]">thêm từ đầu tiên</Link>
+          Chưa có từ nào — <Link href="/vocab/new" className="text-[var(--primary)]">thêm từ đầu tiên</Link>
         </p>
       ) : (
         <div className="divide-y divide-gray-50">

@@ -2,14 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { IconHome, IconCards, IconBook, IconMusic, IconBarChart } from '@/components/ui/Icons'
 
 // Bottom nav — chỉ hiện trên mobile (md:hidden)
 const NAV = [
-  { href: '/',          label: 'Home',     icon: '🏠' },
-  { href: '/flashcard', label: 'Flashcard', icon: '🃏' },
-  { href: '/vocab',     label: 'Từ vựng',  icon: '📖' },
-  { href: '/lyrics',    label: 'Lyrics',   icon: '🎵' },
-  { href: '/stats',     label: 'Stats',    icon: '📊' },
+  { href: '/',          label: 'Home',     icon: IconHome },
+  { href: '/flashcard', label: 'Flashcard', icon: IconCards },
+  { href: '/vocab',     label: 'Từ vựng',  icon: IconBook },
+  { href: '/lyrics',    label: 'Lyrics',   icon: IconMusic },
+  { href: '/stats',     label: 'Stats',    icon: IconBarChart },
 ]
 
 export default function BottomNav() {
@@ -24,7 +25,7 @@ export default function BottomNav() {
         height: '56px',          // WCAG AA minimum touch target height
       }}
     >
-      {NAV.map(({ href, label, icon }) => {
+      {NAV.map(({ href, label, icon: Icon }) => {
         const active = href === '/' ? pathname === '/' : pathname.startsWith(href)
         return (
           <Link
@@ -37,11 +38,11 @@ export default function BottomNav() {
               minHeight: '44px',
               padding: '6px 8px',
               // Active: pink top border indicator + pink text
-              borderTop: active ? '2px solid var(--pink)' : '2px solid transparent',
-              color: active ? 'var(--pink)' : 'var(--text-muted)',
+              borderTop: active ? '2px solid var(--primary)' : '2px solid transparent',
+              color: active ? 'var(--primary)' : 'var(--text-muted)',
             }}
           >
-            <span className="text-xl leading-none">{icon}</span>
+            <Icon size={20} />
             <span className="text-[13px] font-medium leading-none">{label}</span>
           </Link>
         )

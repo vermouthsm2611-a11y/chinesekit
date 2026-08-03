@@ -7,10 +7,10 @@ import PinyinText from '@/components/ui/PinyinText'
 const PAGE_SIZE = 30
 
 const SOURCE_LABELS = {
-  manual: '✏️ Manual',
-  douyin: '📱 Douyin',
-  music:  '🎵 Nhạc',
-  game:   '🎮 Game',
+  manual: 'Manual',
+  douyin: 'Douyin',
+  music:  'Nhạc',
+  game:   'Game',
 }
 
 export default function PatternList({ patterns }) {
@@ -108,7 +108,7 @@ export default function PatternList({ patterns }) {
           {/* Sentinel + spinner */}
           {hasMore && (
             <div ref={sentinelRef} className="flex justify-center py-6">
-              <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--pink)] animate-spin" />
+              <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--primary)] animate-spin" />
             </div>
           )}
         </>
@@ -217,7 +217,7 @@ function PatternCard({ pattern, isOpen, onToggle }) {
             <Link href={`/vocab/${pattern.id}?back=/patterns`}
               className="text-sm transition-colors"
               style={{ color: 'var(--text-muted)' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--pink)'}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
             >
               ✏️ Sửa →
@@ -231,7 +231,7 @@ function PatternCard({ pattern, isOpen, onToggle }) {
           <Link href={`/vocab/${pattern.id}?back=/patterns`}
             className="text-sm transition-colors"
             style={{ color: 'var(--text-muted)' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--pink)'}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'}
             onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             ✏️ Sửa →

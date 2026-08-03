@@ -122,7 +122,7 @@ export default function VocabList({ entries }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full px-4 py-3 text-[15px] border border-gray-200
-                     rounded-lg bg-white outline-none focus:border-[var(--pink)] transition-colors"
+                     rounded-lg bg-white outline-none focus:border-[var(--primary)] transition-colors"
         />
 
         <div className="flex gap-2 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible
@@ -132,10 +132,10 @@ export default function VocabList({ entries }) {
             onChange={setSrc}
             options={[
               { value: 'all',    label: 'Mọi nguồn' },
-              { value: 'douyin', label: '📱 Douyin' },
-              { value: 'music',  label: '🎵 Nhạc' },
-              { value: 'game',   label: '🎮 Game' },
-              { value: 'manual', label: '✏️ Manual' },
+              { value: 'douyin', label: 'Douyin' },
+              { value: 'music',  label: 'Nhạc' },
+              { value: 'game',   label: 'Game' },
+              { value: 'manual', label: 'Manual' },
             ]}
           />
           <FilterGroup
@@ -231,7 +231,7 @@ export default function VocabList({ entries }) {
                         <td className="px-4 py-3 align-middle">
                           <Link
                             href={`/vocab/${entry.id}`}
-                            className="text-gray-400 hover:text-[var(--pink)] transition-colors"
+                            className="text-gray-400 hover:text-[var(--primary)] transition-colors"
                           >
                             Sửa →
                           </Link>
@@ -247,7 +247,7 @@ export default function VocabList({ entries }) {
           {/* Sentinel + loading indicator */}
           {hasMore && (
             <div ref={sentinelRef} className="flex justify-center py-6">
-              <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--pink)] animate-spin" />
+              <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-[var(--primary)] animate-spin" />
             </div>
           )}
         </>
@@ -305,7 +305,7 @@ function FilterGroup({ value, onChange, options }) {
           className={[
             'px-4 py-2 text-[16px] rounded-md transition-colors whitespace-nowrap',
             value === opt.value
-              ? 'bg-[var(--pink)] text-white'
+              ? 'bg-[var(--primary)] text-white'
               : 'hover:bg-[var(--bg-muted)]',
           ].join(' ')}
           style={value !== opt.value ? { color: 'var(--text-secondary)' } : {}}

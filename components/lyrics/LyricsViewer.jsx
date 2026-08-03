@@ -25,7 +25,7 @@ function HanziLine({ text, showPinyin, onCharClick }) {
               key={i}
               onClick={(e) => onCharClick(char, e)}
               className="cursor-pointer rounded px-0.5 transition-colors
-                         hover:bg-[var(--pink-soft)] hover:text-[var(--pink)]
+                         hover:bg-[var(--primary-soft)] hover:text-[var(--primary)]
                          [ruby-align:center]"
               style={{ fontSize: '32px' }}
             >
@@ -48,7 +48,7 @@ function HanziLine({ text, showPinyin, onCharClick }) {
             key={i}
             onClick={(e) => onCharClick(char, e)}
             className="cursor-pointer rounded px-0.5 transition-colors
-                       hover:bg-[var(--pink-soft)] hover:text-[var(--pink)]"
+                       hover:bg-[var(--primary-soft)] hover:text-[var(--primary)]"
           >
             {char}
           </span>
@@ -90,7 +90,7 @@ export default function LyricsViewer({ lines, initialShowPinyin = false }) {
           className={`inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg
                       border transition-colors
                       ${showPinyin
-                        ? 'border-[var(--pink)] bg-[var(--pink-soft)] text-[var(--pink)]'
+                        ? 'border-[var(--primary)] bg-[var(--primary-soft)] text-[var(--primary)]'
                         : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
                       }`}
         >

@@ -1,30 +1,19 @@
 /**
  * PinyinText.jsx
- * Render chuỗi pinyin với màu theo tone của từng âm tiết.
+ * Render chuỗi pinyin — 1 màu duy nhất (kế thừa màu chữ hiện tại).
+ *
+ * Trước đây tô màu theo tone (xem lib/toneColor.js), nhưng đã bỏ theo
+ * yêu cầu để đơn giản hoá UI. lib/toneColor.js vẫn giữ lại phòng khi
+ * cần bật lại tính năng này qua Settings sau này.
  *
  * Props:
- *   pinyin   {string}  — chuỗi pinyin có dấu, vd: "nǐ hǎo"
+ *   pinyin    {string} — chuỗi pinyin có dấu, vd: "nǐ hǎo"
  *   className {string} — class bổ sung (vd: text-[13px] lowercase)
- *
- * Dùng thay cho <span className="text-gray-400">{entry.pinyin}</span>
- * ở mọi nơi trong app.
  */
 'use client'
-
-import { parsePinyinColors } from '@/lib/toneColor'
 
 export default function PinyinText({ pinyin, className = '' }) {
   if (!pinyin) return null
 
-  const parts = parsePinyinColors(pinyin)
-
-  return (
-    <span className={className}>
-      {parts.map((part, i) => (
-        <span key={i} style={{ color: part.color }}>
-          {part.text}
-        </span>
-      ))}
-    </span>
-  )
+  return <span className={className}>{pinyin}</span>
 }

@@ -99,7 +99,7 @@ export default function AddSongForm({ action }) {
               disabled={translating || !hanziText.trim()}
               className="inline-flex items-center gap-1.5 text-[13px] px-3 py-1 rounded-lg
                          border border-gray-200 bg-white text-gray-600
-                         hover:border-[var(--pink)] hover:text-[var(--pink)] transition-colors
+                         hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors
                          disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {translating

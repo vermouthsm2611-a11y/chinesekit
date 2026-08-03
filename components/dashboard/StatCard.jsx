@@ -9,20 +9,20 @@ export default function StatCard({ label, value, sub, accent = false }) {
     <div
       className="rounded-xl p-4"
       style={{
-        background: accent ? 'var(--pink-soft)' : 'var(--bg-surface)',
-        border: `1px solid ${accent ? 'var(--pink-border)' : 'var(--border)'}`,
+        background: accent ? 'var(--primary-soft)' : 'var(--bg-surface)',
+        border: `1px solid ${accent ? 'var(--primary-border)' : 'var(--border)'}`,
         boxShadow: 'var(--shadow-card)',
       }}
     >
       <p
         className="text-[13px] mb-1.5 font-medium"
-        style={{ color: accent ? 'var(--pink)' : 'var(--text-muted)' }}
+        style={{ color: accent ? 'var(--primary)' : 'var(--text-muted)' }}
       >
         {label}
       </p>
       <p
         className="text-4xl font-semibold leading-none"
-        style={{ color: accent ? 'var(--pink)' : 'var(--text-primary)' }}
+        style={{ color: accent ? 'var(--primary)' : 'var(--text-primary)' }}
       >
         {value}
       </p>

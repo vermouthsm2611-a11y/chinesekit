@@ -2,29 +2,30 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { IconCards, IconMusic, IconBook, IconLayers, IconChat, IconBarChart, IconSettings } from '@/components/ui/Icons'
 
 // Nav config — thêm route mới ở đây, không cần sửa component
 const NAV = [
   {
     section: 'Học',
     items: [
-      { href: '/flashcard', label: 'Flashcard',  icon: '🃏' },
-      { href: '/lyrics',    label: 'Lyrics',     icon: '🎵' },
+      { href: '/flashcard', label: 'Flashcard',  icon: IconCards },
+      { href: '/lyrics',    label: 'Lyrics',     icon: IconMusic },
     ],
   },
   {
     section: 'Thư viện',
     items: [
-      { href: '/vocab',     label: 'Từ vựng',   icon: '📖' },
-      { href: '/patterns',  label: 'Cấu trúc',  icon: '🧩' },
-      { href: '/sentences', label: 'Câu',        icon: '💬' },
+      { href: '/vocab',     label: 'Từ vựng',   icon: IconBook },
+      { href: '/patterns',  label: 'Cấu trúc',  icon: IconLayers },
+      { href: '/sentences', label: 'Câu',        icon: IconChat },
     ],
   },
   {
     section: 'Khác',
     items: [
-      { href: '/stats',    label: 'Thống kê', icon: '📊' },
-      { href: '/settings', label: 'Cài đặt',  icon: '⚙️' },
+      { href: '/stats',    label: 'Thống kê', icon: IconBarChart },
+      { href: '/settings', label: 'Cài đặt',  icon: IconSettings },
     ],
   },
 ]
@@ -59,7 +60,7 @@ export default function Sidebar() {
             {/* Section label */}
             <p className="label-section px-5 py-1.5">{section}</p>
 
-            {items.map(({ href, label, icon }) => {
+            {items.map(({ href, label, icon: Icon }) => {
               const active = href === '/' ? pathname === '/' : pathname.startsWith(href)
               return (
                 <Link
@@ -70,10 +71,10 @@ export default function Sidebar() {
                     active
                       ? {
                           // Active: pink-soft bg + pink text + pink left border
-                          background: 'var(--pink-soft)',
-                          color: 'var(--pink)',
+                          background: 'var(--primary-soft)',
+                          color: 'var(--primary)',
                           fontWeight: 600,
-                          borderLeft: '2px solid var(--pink)',
+                          borderLeft: '2px solid var(--primary)',
                           padding: '0.875rem 1.5rem 0.875rem calc(1.5rem - 2px)',
                         }
                       : {
@@ -95,7 +96,7 @@ export default function Sidebar() {
                     }
                   }}
                 >
-                  <span className="text-base leading-none">{icon}</span>
+                  <Icon size={18} />
                   {label}
                 </Link>
               )

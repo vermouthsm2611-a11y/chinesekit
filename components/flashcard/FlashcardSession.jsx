@@ -19,12 +19,12 @@ function shuffle(arr) {
 // Interval (ngày) theo bucket: index = bucket number
 const BUCKET_INTERVALS = [0, 1, 3, 7]
 
-// Màu badge bucket
+// Badge bucket — 1 tông neutral, chỉ khác nhau qua label (tránh rainbow lệch theme)
 const BUCKET_STYLES = {
-  0: { label: 'Mới',  bg: 'bg-blue-50',   text: 'text-blue-600'  },
-  1: { label: 'B1',   bg: 'bg-red-50',    text: 'text-red-500'   },
-  2: { label: 'B2',   bg: 'bg-yellow-50', text: 'text-yellow-600'},
-  3: { label: 'B3',   bg: 'bg-green-50',  text: 'text-green-600' },
+  0: { label: 'Mới' },
+  1: { label: 'B1'  },
+  2: { label: 'B2'  },
+  3: { label: 'B3'  },
 }
 
 /**
@@ -54,10 +54,12 @@ function calcProgress(currentBucket, result, today) {
   return { newBucket, nextReview }
 }
 
+// Màu rating nối vào design tokens (--rating-hard/ok) thay vì hardcode —
+// 'skip' giữ neutral gray vì không phải rating thật, chỉ là bỏ qua.
 const RATINGS = [
-  { value: 'incorrect', label: 'Khó',    color: 'border-orange-200 text-orange-600 hover:bg-orange-50' },
-  { value: 'correct',   label: 'Ổn',     color: 'border-green-200  text-green-700  hover:bg-green-50'  },
-  { value: 'skip',      label: 'Bỏ qua', color: 'border-gray-200   text-gray-500   hover:bg-gray-50'   },
+  { value: 'incorrect', label: 'Khó',    varColor: 'var(--rating-hard)' },
+  { value: 'correct',   label: 'Ổn',     varColor: 'var(--rating-ok)'   },
+  { value: 'skip',      label: 'Bỏ qua', varColor: 'var(--text-muted)' },
 ]
 
 // ── Main component ───────────────────────────────────────────────────────────
@@ -149,19 +151,19 @@ export default function FlashcardSession({ entries, progressMap = {}, today }) {
         <h2 className="text-lg font-medium mb-1">Session hoàn thành!</h2>
         <p className="text-[13px] mb-6" style={{ color: 'var(--text-muted)' }}>{total} từ đã ôn</p>
 
-        {/* Kết quả rating */}
+        {/* Kết quả rating — nối màu vào --rating-ok/--rating-hard, giữ nhất quán với nút rating lúc ôn */}
         <div className="grid grid-cols-3 gap-3 mb-4">
-          <div className="bg-green-50 rounded-xl p-3">
-            <p className="text-2xl font-medium text-green-700">{correct}</p>
-            <p className="text-[13px] text-green-600 mt-0.5">Ổn</p>
+          <div className="rounded-xl p-3" style={{ background: 'var(--bg-muted)' }}>
+            <p className="text-2xl font-medium" style={{ color: 'var(--rating-ok)' }}>{correct}</p>
+            <p className="text-[13px] mt-0.5" style={{ color: 'var(--rating-ok)' }}>Ổn</p>
           </div>
-          <div className="bg-orange-50 rounded-xl p-3">
-            <p className="text-2xl font-medium text-orange-700">{incorrect}</p>
-            <p className="text-[13px] text-orange-600 mt-0.5">Khó</p>
+          <div className="rounded-xl p-3" style={{ background: 'var(--bg-muted)' }}>
+            <p className="text-2xl font-medium" style={{ color: 'var(--rating-hard)' }}>{incorrect}</p>
+            <p className="text-[13px] mt-0.5" style={{ color: 'var(--rating-hard)' }}>Khó</p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-3">
-            <p className="text-2xl font-medium text-gray-600">{skipped}</p>
-            <p className="text-[13px] text-gray-500 mt-0.5">Bỏ qua</p>
+          <div className="rounded-xl p-3" style={{ background: 'var(--bg-muted)' }}>
+            <p className="text-2xl font-medium" style={{ color: 'var(--text-muted)' }}>{skipped}</p>
+            <p className="text-[13px] mt-0.5" style={{ color: 'var(--text-muted)' }}>Bỏ qua</p>
           </div>
         </div>
 
@@ -212,8 +214,9 @@ export default function FlashcardSession({ entries, progressMap = {}, today }) {
               <span className={`badge ${current.type === 'vocab' ? 'badge-vocab' : 'badge-pattern'}`}>
                 {current.type === 'vocab' ? 'từ vựng' : 'cấu trúc'}
               </span>
-              {/* Bucket badge — feedback trực quan cho user */}
-              <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${bucketStyle.bg} ${bucketStyle.text}`}>
+              {/* Bucket badge — feedback trực quan cho user, neutral 1 tông */}
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full"
+                    style={{ background: 'var(--bg-muted)', color: 'var(--text-secondary)' }}>
                 {bucketStyle.label}
               </span>
             </div>
@@ -255,13 +258,15 @@ export default function FlashcardSession({ entries, progressMap = {}, today }) {
 
       {/* Rating buttons — chỉ hiện sau khi flip */}
       <div className={`flex gap-3 mt-4 transition-opacity ${flipped ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        {RATINGS.map(({ value, label, color }) => (
+        {RATINGS.map(({ value, label, varColor }) => (
           <button
             key={value}
             onClick={() => rate(value)}
             disabled={saving}
-            className={`flex-1 py-3 text-sm rounded-xl border font-medium
-                        transition-colors disabled:opacity-50 ${color}`}
+            className="flex-1 py-3 text-sm rounded-xl border font-medium transition-colors disabled:opacity-50"
+            style={{ borderColor: 'var(--border)', color: varColor }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-muted)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '' }}
           >
             {label}
           </button>

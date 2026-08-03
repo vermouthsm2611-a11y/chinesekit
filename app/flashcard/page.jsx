@@ -90,7 +90,7 @@ export default async function FlashcardPage({ searchParams }) {
 // ── Filter bar ───────────────────────────────────────────────────────────────
 function SessionFilter({ currentType, currentSource }) {
   const types   = [['all','Tất cả'], ['vocab','Từ vựng'], ['pattern','Cấu trúc']]
-  const sources = [['all','Mọi nguồn'], ['douyin','📱 Douyin'], ['music','🎵 Nhạc'], ['game','🎮 Game'], ['manual','✏️ Manual']]
+  const sources = [['all','Mọi nguồn'], ['douyin','Douyin'], ['music','Nhạc'], ['game','Game'], ['manual','Manual']]
 
   function buildUrl(type, source) {
     const p = new URLSearchParams()
@@ -107,7 +107,7 @@ function SessionFilter({ currentType, currentSource }) {
         {types.map(([v, l]) => (
           <a key={v} href={buildUrl(v, currentSource)}
             className={`px-4 py-1.5 text-[16px] rounded-md transition-colors whitespace-nowrap ${
-              currentType === v ? 'bg-[var(--pink)] text-white' : 'hover:bg-[var(--bg-muted)]'
+              currentType === v ? 'bg-[var(--primary)] text-white' : 'hover:bg-[var(--bg-muted)]'
             }`}
             style={currentType !== v ? { color: 'var(--text-secondary)' } : {}}
           >{l}</a>
@@ -118,7 +118,7 @@ function SessionFilter({ currentType, currentSource }) {
         {sources.map(([v, l]) => (
           <a key={v} href={buildUrl(currentType, v)}
             className={`px-4 py-1.5 text-[16px] rounded-md transition-colors whitespace-nowrap ${
-              currentSource === v ? 'bg-[var(--pink)] text-white' : 'hover:bg-[var(--bg-muted)]'
+              currentSource === v ? 'bg-[var(--primary)] text-white' : 'hover:bg-[var(--bg-muted)]'
             }`}
             style={currentSource !== v ? { color: 'var(--text-secondary)' } : {}}
           >{l}</a>

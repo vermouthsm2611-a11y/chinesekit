@@ -72,7 +72,7 @@ export default function SettingsForm({ action, settings }) {
                 name="lyrics_show_pinyin"
                 value="true"
                 defaultChecked={settings.lyricsShowPinyin}
-                className="w-5 h-5 accent-[var(--pink)]"
+                className="w-5 h-5 accent-[var(--primary)]"
               />
               <span className="text-[16px]" style={{ color: 'var(--text-secondary)' }}>
                 Hiện pinyin mặc định trong Lyrics

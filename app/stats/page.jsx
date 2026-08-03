@@ -98,10 +98,10 @@ async function getStats() {
   // ── Source counts ──────────────────────────────────────────────────────────
   const totalEntries = (vocabCount ?? 0) + (patternCount ?? 0)
   const sources = [
-    { label: 'Douyin', emoji: '📱', count: cntDouyin ?? 0 },
-    { label: 'Nhạc',   emoji: '🎵', count: cntMusic  ?? 0 },
-    { label: 'Game',   emoji: '🎮', count: cntGame   ?? 0 },
-    { label: 'Manual', emoji: '✏️', count: cntManual ?? 0 },
+    { label: 'Douyin', count: cntDouyin ?? 0 },
+    { label: 'Nhạc',   count: cntMusic  ?? 0 },
+    { label: 'Game',   count: cntGame   ?? 0 },
+    { label: 'Manual', count: cntManual ?? 0 },
   ]
 
   return {
@@ -178,18 +178,18 @@ export default async function StatsPage() {
 
         {/* Nguồn học */}
         <div className="card">
-          <p className="text-[14px] font-medium text-gray-800 mb-4">📌 Nguồn học</p>
+          <p className="text-[14px] font-medium text-gray-800 mb-4">Nguồn học</p>
           <div className="flex flex-col gap-3">
-            {sources.map(({ label, emoji, count }) => {
+            {sources.map(({ label, count }) => {
               const pct = totalEntries > 0 ? (count / totalEntries) * 100 : 0
               return (
                 <div key={label}>
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">{emoji} {label}</span>
+                    <span className="text-sm text-gray-600">{label}</span>
                     <span className="text-sm font-medium text-gray-700">{count}</span>
                   </div>
                   <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[var(--pink)] rounded-full" style={{ width: `${pct}%` }} />
+                    <div className="h-full bg-[var(--primary)] rounded-full" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               )
