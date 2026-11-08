@@ -88,8 +88,8 @@ export default function EntryForm({ action, initial, back }) {
       {/* Truyền back URL xuống Server Action để redirect đúng sau save */}
       {back && <input type="hidden" name="back" value={back} />}
 
-      {/* Row 1: Type + Source */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* Row 1: Type */}
+      <div className="grid grid-cols-1 gap-4">
         <div className="flex flex-col gap-1">
           <label className="text-[13px] font-medium text-gray-600">Loại *</label>
           <select
@@ -104,12 +104,6 @@ export default function EntryForm({ action, initial, back }) {
           </select>
         </div>
 
-        <Field label="Nguồn" name="source" as="select" defaultValue={initial?.source ?? 'manual'}>
-          <option value="manual">✏️ Manual</option>
-          <option value="douyin">📱 Douyin</option>
-          <option value="music">🎵 Nhạc</option>
-          <option value="game">🎮 Game</option>
-        </Field>
       </div>
 
       {/* Chọn "Câu" → bản ghi lưu sang bảng sentences (tab Câu), không nằm trong entries */}

@@ -4,6 +4,8 @@ import { useFormStatus } from 'react-dom'
 import { useState } from 'react'
 import { clearReviewLog } from '@/app/actions/settings'
 import Toast from '@/components/ui/Toast'
+import ImportCard from '@/components/settings/ImportCard'
+import { FEATURES } from '@/lib/features'
 
 export default function SettingsForm({ action, settings }) {
   const [saved,    setSaved]    = useState(false)
@@ -24,7 +26,9 @@ export default function SettingsForm({ action, settings }) {
       <Toast message={toastMsg} type="error" onClose={() => setToastMsg('')} />
       <div className="max-w-2xl flex flex-col gap-6">
 
+        {(FEATURES.flashcard || FEATURES.lyrics) && (
         <form action={handleSubmit} className="card flex flex-col gap-6">
+          {FEATURES.flashcard && (<>
           {/* Section: Học tập */}
           <p className="text-[18px] font-semibold" style={{ color: 'var(--text-primary)' }}>
             📚 Học tập
@@ -61,8 +65,11 @@ export default function SettingsForm({ action, settings }) {
               <span className="text-[15px]" style={{ color: 'var(--text-muted)' }}>thẻ / phiên</span>
             </div>
           </div>
+          </>)}
 
+          {FEATURES.lyrics && (
           <div className="border-t pt-5" style={{ borderColor: 'var(--border)' }}>
+            <input type="hidden" name="lyrics_section" value="1" />
             <p className="text-[18px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
               🎵 Lyrics
             </p>
@@ -82,6 +89,7 @@ export default function SettingsForm({ action, settings }) {
               Bật = pinyin luôn hiện khi mở bài hát, không cần nhấn nút toggle.
             </p>
           </div>
+          )}
 
           <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: 'var(--border)' }}>
             <SaveButton />
@@ -90,6 +98,7 @@ export default function SettingsForm({ action, settings }) {
             )}
           </div>
         </form>
+        )}
 
         {/* Export */}
         <div className="card flex flex-col gap-4">
@@ -105,7 +114,10 @@ export default function SettingsForm({ action, settings }) {
           </div>
         </div>
 
-        <DangerZone />
+        <ImportCard />
+
+        {/* Xoá lịch sử ôn tập chỉ có nghĩa khi dùng flashcard */}
+        {FEATURES.flashcard && <DangerZone />}
       </div>
     </>
   )

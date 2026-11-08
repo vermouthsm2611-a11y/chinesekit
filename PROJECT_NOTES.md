@@ -389,3 +389,62 @@ return (
 ### System reminder truncation — workaround
 
 Hệ thống truncate file khi hiển thị diff trong system reminder. **Workaround:** dùng `python3` để ghi file in-place thay vì `Edit` tool cho các đoạn dài. Luôn verify bằng `tail` + brace count sau mỗi lần sửa.
+
+---
+
+## SESSION — Ẩn tính năng, bỏ `source`, Import JSON (2026-11-06)
+
+App hiện chủ yếu dùng để **LƯU** từ vựng / câu / cấu trúc. Flashcard + Lyrics không dùng → ẩn (không xóa).
+
+### Feature flags — `lib/features.js`
+
+```js
+export const FEATURES = { flashcard: false, lyrics: false }
+```
+
+- `flashcard` gồm: `/flashcard`, `/stats` (toàn bộ là dữ liệu `review_log`), thẻ "Ôn hôm nay" / "Streak" /
+  FlashcardPreview trên Dashboard, cài đặt mục tiêu + số thẻ, nút xóa lịch sử ôn tập.
+- `lyrics` gồm: `/lyrics/*`, SongsWidget trên Dashboard, cài đặt pinyin lyrics.
+- `middleware.js` chặn route của tính năng tắt → redirect `/` (chặn trước khi render → không truy vấn DB).
+- Sidebar lọc mục theo `feature`, section rỗng tự ẩn. BottomNav cố định: Home / Từ vựng / Cấu trúc / Câu / Cài đặt.
+- Dashboard chỉ truy vấn phần đang bật (11 → 4 query khi tắt cả 2). Thẻ số: Từ vựng / Cấu trúc / Câu.
+- **Bật lại:** đổi `false` → `true`. Nhớ xử lý lỗi tiềm ẩn ở SettingsForm (mục cuối).
+
+### Bỏ `source` khỏi UI — cột DB vẫn còn
+
+- Đã bỏ: ô chọn Nguồn (EntryForm), lọc + cột Nguồn (VocabList), nhãn nguồn (PatternList), lọc nguồn (flashcard),
+  thẻ "Nguồn học" (Dashboard, Stats), cột `source` trong Export.
+- `addEntry` / `updateEntry` không gửi `source` → insert lấy mặc định `manual`, update không đụng tới.
+  (Nếu chỉ bỏ ô chọn mà giữ code cũ, `updateEntry` sẽ ghi `null`.)
+- Xóa hẳn cột khi muốn: `ALTER TABLE entries DROP COLUMN source;` (index `idx_entries_source` tự xóa theo).
+
+### Import JSON — `app/actions/import.js` + `components/settings/ImportCard.jsx`
+
+- Nhận file từ doubao_vietsub (`chinesekit_*.json`) hoặc file Export của chính app.
+- `type: 'sentence'` → bảng `sentences`; `vocab` / `pattern` (mặc định `vocab`) → `entries` (kèm `examples`).
+- Bỏ qua: sai định dạng, trùng hanzi trong file, hanzi đã có ở **entries HOẶC sentences**. `source` / `created_at`
+  trong file bị bỏ qua.
+- `.in('hanzi', …)` chia lô 100 — PostgREST đặt filter vào URL, danh sách dài vượt giới hạn độ dài URL.
+- `meaning_vi: ""` vẫn import (hợp lệ với `NOT NULL`); KHÔNG bỏ `NOT NULL` vì `VocabList` gọi
+  `e.meaning_vi.toLowerCase()` và index full-text `hanzi || ' ' || meaning_vi` sẽ thành NULL.
+- Bảng `sentences` không có trong `schema.sql` (tạo trực tiếp trên Supabase): cột hanzi / pinyin / meaning_vi / notes.
+
+### `revalidatePath` trong Server Action → mất state client
+
+**Triệu chứng:** import CÓ thêm mục → trang "load nhẹ", toast không hiện. Import toàn mục đã có (không gọi
+`revalidatePath`) → toast hiện bình thường.
+
+**Nguyên nhân:** Server Action gọi `revalidatePath` → Next.js làm mới route hiện tại trong cùng response →
+`/settings` (có `loading.jsx`) bị dựng lại → component có state cục bộ bị tạo mới → `setState` sau `await` rơi vào
+component cũ đã gỡ. (Suy luận từ triệu chứng, chưa quan sát trực tiếp — fix bên dưới đúng bất kể thứ tự.)
+
+**Fix:** đưa state ra **kho cấp module** + `useSyncExternalStore` (`components/settings/importToastStore.js`).
+Module JS không bị dựng lại → component cũ hay mới đều đọc được.
+KHÔNG bỏ `revalidatePath`: `/vocab` là trang tĩnh, không revalidate thì từ mới không hiện.
+
+### ⚠️ Lỗi tiềm ẩn: SettingsForm "✓ Đã lưu"
+
+`saveSettings` gọi `revalidatePath('/settings')` mà "✓ Đã lưu" là `useState` cục bộ → có thể dính lỗi y hệt mục trên.
+Chưa sửa vì form đang ẩn (flashcard + lyrics tắt). Bật lại tính năng thì xử lý theo cùng cách.
+`saveSettings` đã sửa: chỉ lưu field đang hiện trên form (`formData.has`; checkbox lyrics dùng marker
+`lyrics_section`) → field bị ẩn không ghi đè giá trị cũ.

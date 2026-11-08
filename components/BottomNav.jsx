@@ -2,15 +2,17 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { IconHome, IconCards, IconBook, IconMusic, IconBarChart } from '@/components/ui/Icons'
+import { IconHome, IconBook, IconLayers, IconChat, IconSettings } from '@/components/ui/Icons'
 
-// Bottom nav — chỉ hiện trên mobile (md:hidden)
+// Bottom nav — chỉ hiện trên mobile (md:hidden).
+// 2026-11-06: flashcard / lyrics / stats ẩn (lib/features.js) -> khớp Sidebar. Bản cũ:
+// Home, Flashcard(/flashcard), Từ vựng, Lyrics(/lyrics), Stats(/stats) — icon IconCards/IconMusic/IconBarChart.
 const NAV = [
   { href: '/',          label: 'Home',     icon: IconHome },
-  { href: '/flashcard', label: 'Flashcard', icon: IconCards },
   { href: '/vocab',     label: 'Từ vựng',  icon: IconBook },
-  { href: '/lyrics',    label: 'Lyrics',   icon: IconMusic },
-  { href: '/stats',     label: 'Stats',    icon: IconBarChart },
+  { href: '/patterns',  label: 'Cấu trúc', icon: IconLayers },
+  { href: '/sentences', label: 'Câu',      icon: IconChat },
+  { href: '/settings',  label: 'Cài đặt',  icon: IconSettings },
 ]
 
 export default function BottomNav() {

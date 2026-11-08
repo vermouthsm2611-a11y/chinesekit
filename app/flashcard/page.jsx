@@ -10,7 +10,6 @@ export const BUCKET_INTERVALS = [0, 1, 3, 7]
 
 export default async function FlashcardPage({ searchParams }) {
   const type   = searchParams?.type   ?? 'all'
-  const source = searchParams?.source ?? 'all'
 
   // ── Fetch entries + entry_progress song song ────────────────────────────
   let entryQuery = supabase
@@ -18,7 +17,6 @@ export default async function FlashcardPage({ searchParams }) {
     .select('id, type, hanzi, pinyin, hv, meaning_vi, meaning_en, example, example_vi, notes')
 
   if (type   !== 'all') entryQuery = entryQuery.eq('type',   type)
-  if (source !== 'all') entryQuery = entryQuery.eq('source', source)
 
   const today = new Date().toISOString().split('T')[0] // 'YYYY-MM-DD'
 
@@ -61,7 +59,7 @@ export default async function FlashcardPage({ searchParams }) {
         <Link href="/" className="btn">← Dashboard</Link>
       </div>
 
-      <SessionFilter currentType={type} currentSource={source} />
+      <SessionFilter currentType={type} />
 
       {entries.length > 0 ? (
         <FlashcardSession
@@ -88,14 +86,12 @@ export default async function FlashcardPage({ searchParams }) {
 }
 
 // ── Filter bar ───────────────────────────────────────────────────────────────
-function SessionFilter({ currentType, currentSource }) {
+function SessionFilter({ currentType }) {
   const types   = [['all','Tất cả'], ['vocab','Từ vựng'], ['pattern','Cấu trúc']]
-  const sources = [['all','Mọi nguồn'], ['douyin','Douyin'], ['music','Nhạc'], ['game','Game'], ['manual','Manual']]
 
-  function buildUrl(type, source) {
+  function buildUrl(type) {
     const p = new URLSearchParams()
     if (type   !== 'all') p.set('type',   type)
-    if (source !== 'all') p.set('source', source)
     return `/flashcard${p.toString() ? '?' + p : ''}`
   }
 
@@ -105,22 +101,11 @@ function SessionFilter({ currentType, currentSource }) {
       <div className="flex gap-1 rounded-lg p-1 flex-shrink-0 border"
            style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
         {types.map(([v, l]) => (
-          <a key={v} href={buildUrl(v, currentSource)}
+          <a key={v} href={buildUrl(v)}
             className={`px-4 py-1.5 text-[16px] rounded-md transition-colors whitespace-nowrap ${
               currentType === v ? 'bg-[var(--primary)] text-white' : 'hover:bg-[var(--bg-muted)]'
             }`}
             style={currentType !== v ? { color: 'var(--text-secondary)' } : {}}
-          >{l}</a>
-        ))}
-      </div>
-      <div className="flex gap-1 rounded-lg p-1 flex-shrink-0 border"
-           style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
-        {sources.map(([v, l]) => (
-          <a key={v} href={buildUrl(currentType, v)}
-            className={`px-4 py-1.5 text-[16px] rounded-md transition-colors whitespace-nowrap ${
-              currentSource === v ? 'bg-[var(--primary)] text-white' : 'hover:bg-[var(--bg-muted)]'
-            }`}
-            style={currentSource !== v ? { color: 'var(--text-secondary)' } : {}}
           >{l}</a>
         ))}
       </div>

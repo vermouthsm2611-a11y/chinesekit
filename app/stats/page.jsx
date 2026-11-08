@@ -43,10 +43,6 @@ async function getStats() {
     { data: recentActivity },   // 14 ngày gần nhất — để vẽ chart
     { data: allReviewDates },   // 90 ngày — để tính streak
     { data: topReviewed },      // top entries được ôn nhiều nhất
-    { count: cntDouyin },
-    { count: cntMusic },
-    { count: cntGame },
-    { count: cntManual },
   ] = await Promise.all([
     supabase.from('entries').select('*', { count: 'exact', head: true }).eq('type', 'vocab'),
     supabase.from('entries').select('*', { count: 'exact', head: true }).eq('type', 'pattern'),
@@ -59,10 +55,6 @@ async function getStats() {
       .select('entry_id, result, entries(hanzi, meaning_vi)')
       .order('reviewed_at', { ascending: false })
       .limit(200),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'douyin'),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'music'),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'game'),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'manual'),
   ])
 
   // ── Activity: group by date (14 ngày) ─────────────────────────────────────
@@ -95,18 +87,9 @@ async function getStats() {
     .slice(0, 5)
     .map(([id, count]) => ({ id, count, ...entryMeta[id] }))
 
-  // ── Source counts ──────────────────────────────────────────────────────────
-  const totalEntries = (vocabCount ?? 0) + (patternCount ?? 0)
-  const sources = [
-    { label: 'Douyin', count: cntDouyin ?? 0 },
-    { label: 'Nhạc',   count: cntMusic  ?? 0 },
-    { label: 'Game',   count: cntGame   ?? 0 },
-    { label: 'Manual', count: cntManual ?? 0 },
-  ]
-
   return {
     vocabCount, patternCount, songCount, totalReviews,
-    activityDays, results, streak, topEntries, sources, totalEntries,
+    activityDays, results, streak, topEntries,
   }
 }
 
@@ -114,7 +97,7 @@ async function getStats() {
 export default async function StatsPage() {
   const {
     vocabCount, patternCount, songCount, totalReviews,
-    activityDays, results, streak, topEntries, sources, totalEntries,
+    activityDays, results, streak, topEntries,
   } = await getStats()
 
   const totalRecent = results.correct + results.incorrect + results.skip
@@ -163,8 +146,8 @@ export default async function StatsPage() {
         <ActivityChart days={activityDays} />
       </div>
 
-      {/* ── Row 4: Results + Source ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-4 mb-5">
+      {/* ── Row 4: Results (full width — đã bỏ "Nguồn học") ─────────────────── */}
+      <div className="mb-5">
 
         {/* Kết quả ôn tập */}
         <div className="card">
@@ -174,27 +157,6 @@ export default async function StatsPage() {
           ) : (
             <ResultsDonut results={results} total={totalRecent} />
           )}
-        </div>
-
-        {/* Nguồn học */}
-        <div className="card">
-          <p className="text-[14px] font-medium text-gray-800 mb-4">Nguồn học</p>
-          <div className="flex flex-col gap-3">
-            {sources.map(({ label, count }) => {
-              const pct = totalEntries > 0 ? (count / totalEntries) * 100 : 0
-              return (
-                <div key={label}>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">{label}</span>
-                    <span className="text-sm font-medium text-gray-700">{count}</span>
-                  </div>
-                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[var(--primary)] rounded-full" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
         </div>
       </div>
 

@@ -6,13 +6,6 @@ import PinyinText from '@/components/ui/PinyinText'
 
 const PAGE_SIZE = 30
 
-const SOURCE_LABELS = {
-  manual: 'Manual',
-  douyin: 'Douyin',
-  music:  'Nhạc',
-  game:   'Game',
-}
-
 export default function PatternList({ patterns }) {
   const [search,       setSearch]       = useState('')
   const [expanded,     setExpanded]     = useState(null)
@@ -173,11 +166,6 @@ function PatternCard({ pattern, isOpen, onToggle }) {
         </div>
 
         <div className="flex items-center justify-end gap-2 mt-3">
-          {pattern.source && pattern.source !== 'manual' && (
-            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              {SOURCE_LABELS[pattern.source]}
-            </span>
-          )}
           {hasMore && (
             <span className="text-xs border rounded px-1.5 py-0.5"
                   style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}>

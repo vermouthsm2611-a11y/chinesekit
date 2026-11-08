@@ -42,7 +42,6 @@ function getFirstExample(entry) {
 
 export default function VocabList({ entries }) {
   const [search,      setSearch]      = useState('')
-  const [srcFilter,   setSrc]         = useState('all')
   const [sort,        setSort]        = useState('newest')
   // shuffleSeed tăng mỗi lần click "Random" khi đã ở random → trigger re-shuffle
   const [shuffleSeed, setShuffleSeed] = useState(0)
@@ -61,8 +60,7 @@ export default function VocabList({ entries }) {
         e.hanzi.includes(q) ||
         e.pinyin?.toLowerCase().includes(q) ||
         e.meaning_vi.toLowerCase().includes(q)
-      const matchSrc = srcFilter === 'all' || e.source === srcFilter
-      return matchSearch && matchSrc
+      return matchSearch
     })
 
     if (sort === 'az')     result.sort((a, b) => a.hanzi.localeCompare(b.hanzi, 'zh'))
@@ -71,12 +69,12 @@ export default function VocabList({ entries }) {
     else if (sort === 'random') return shuffle(result) // shuffleSeed trong deps → re-run khi seed tăng
 
     return result
-  }, [entries, search, srcFilter, sort, shuffleSeed]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [entries, search, sort, shuffleSeed]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset về trang đầu khi filter/sort thay đổi
   useEffect(() => {
     setVisibleCount(PAGE_SIZE)
-  }, [search, srcFilter, sort, shuffleSeed])
+  }, [search, sort, shuffleSeed])
 
   // ── Infinite scroll — IntersectionObserver ────────────────────────────────
   useEffect(() => {
@@ -100,7 +98,7 @@ export default function VocabList({ entries }) {
   // ── Slice visible items ────────────────────────────────────────────────────
   const visible   = filtered.slice(0, visibleCount)
   const hasMore   = visibleCount < filtered.length
-  const isFiltered = search || srcFilter !== 'all'
+  const isFiltered = !!search
 
   // ── Sort change handler — handle re-shuffle khi đã ở random ───────────────
   function handleSortChange(val) {
@@ -127,17 +125,6 @@ export default function VocabList({ entries }) {
 
         <div className="flex gap-2 overflow-x-auto pb-0.5 sm:flex-wrap sm:overflow-visible
                         [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <FilterGroup
-            value={srcFilter}
-            onChange={setSrc}
-            options={[
-              { value: 'all',    label: 'Mọi nguồn' },
-              { value: 'douyin', label: 'Douyin' },
-              { value: 'music',  label: 'Nhạc' },
-              { value: 'game',   label: 'Game' },
-              { value: 'manual', label: 'Manual' },
-            ]}
-          />
           <FilterGroup
             value={sort}
             onChange={handleSortChange}
@@ -186,7 +173,6 @@ export default function VocabList({ entries }) {
                     <th className="text-left px-4 py-2.5 font-medium w-[180px]">Ghi chú</th>
                     <th className="text-left px-4 py-2.5 font-medium w-[200px]">Ví dụ</th>
                     <th className="text-left px-4 py-2.5 font-medium">Pinyin / Dịch</th>
-                    <th className="text-left px-4 py-2.5 font-medium w-[80px]">Nguồn</th>
                     <th className="px-4 py-2.5 w-[60px]" />
                   </tr>
                 </thead>
@@ -227,7 +213,6 @@ export default function VocabList({ entries }) {
                             <span className="text-gray-200">—</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 align-middle">{entry.source}</td>
                         <td className="px-4 py-3 align-middle">
                           <Link
                             href={`/vocab/${entry.id}`}

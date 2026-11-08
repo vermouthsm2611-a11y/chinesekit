@@ -31,7 +31,6 @@ export async function addEntry(prevState, formData) {
     meaning_vi: formData.get('meaning_vi')?.trim(),
     meaning_en: formData.get('meaning_en')?.trim() || null,
     notes:      formData.get('notes')?.trim()      || null,
-    source:     formData.get('source')             || 'manual',
     examples:   parseExamples(formData),
   }
 
@@ -69,7 +68,6 @@ export async function updateEntry(id, prevState, formData) {
     meaning_vi: formData.get('meaning_vi')?.trim(),
     meaning_en: formData.get('meaning_en')?.trim() || null,
     notes:      formData.get('notes')?.trim()      || null,
-    source:     formData.get('source'),
     examples:   parseExamples(formData),
   }
 

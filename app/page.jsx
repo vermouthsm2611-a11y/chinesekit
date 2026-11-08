@@ -1,10 +1,12 @@
 // Dashboard — Server Component
 // force-dynamic cần thiết vì dashboard hiển thị: streak (tính theo ngày thực),
 // reviewedToday (thay đổi real-time sau mỗi flashcard session), previewEntry random
+// Phần flashcard / lyrics chỉ truy vấn + hiển thị khi bật trong lib/features.js
 export const dynamic = 'force-dynamic'
 
 import { supabase } from '@/lib/supabase'
 import { getSettings } from '@/lib/settings'
+import { FEATURES } from '@/lib/features'
 import Link from 'next/link'
 import StatCard from '@/components/dashboard/StatCard'
 import RecentEntries from '@/components/dashboard/RecentEntries'
@@ -37,69 +39,59 @@ function computeStreak(reviews) {
   return streak
 }
 
-async function getDashboardData() {
-  const today = new Date().toISOString().slice(0, 10)
-
+// ── Từng nhóm dữ liệu — chạy song song ở getDashboardData ────────────────────
+async function getLibraryData() {
   const [
     { count: vocabCount },
     { count: patternCount },
-    { count: reviewedToday },
+    { count: sentenceCount },
     { data: recentEntries },
-    { data: songs },
-    { data: reviewHistory },
-    // Source counts song song
-    { count: cntDouyin },
-    { count: cntMusic },
-    { count: cntGame },
-    { count: cntManual },
-    // 1 entry ngẫu nhiên cho flashcard preview (lấy 20, random ở JS)
-    { data: sampleEntries },
   ] = await Promise.all([
     supabase.from('entries').select('*', { count: 'exact', head: true }).eq('type', 'vocab'),
     supabase.from('entries').select('*', { count: 'exact', head: true }).eq('type', 'pattern'),
-    supabase.from('review_log').select('*', { count: 'exact', head: true }).gte('reviewed_at', today),
+    supabase.from('sentences').select('*', { count: 'exact', head: true }),
     supabase.from('entries').select('id, type, hanzi, pinyin, meaning_vi').order('created_at', { ascending: false }).limit(5),
-    supabase.from('songs').select('id, title, artist').order('created_at', { ascending: false }).limit(3),
-    supabase.from('review_log').select('reviewed_at').order('reviewed_at', { ascending: false }).limit(90),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'douyin'),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'music'),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'game'),
-    supabase.from('entries').select('*', { count: 'exact', head: true }).eq('source', 'manual'),
-    supabase.from('entries').select('id, hanzi, pinyin, hv, meaning_vi').limit(20),
   ])
+  return { vocabCount, patternCount, sentenceCount, recentEntries }
+}
 
-  const streak = computeStreak(reviewHistory)
-
-  // Chọn 1 entry ngẫu nhiên từ 20 entries đầu
+async function getFlashcardData() {
+  if (!FEATURES.flashcard) return { reviewedToday: 0, streak: 0, previewEntry: null, dailyGoal: 0 }
+  const today = new Date().toISOString().slice(0, 10)
+  const [
+    { count: reviewedToday },
+    { data: reviewHistory },
+    // 1 entry ngẫu nhiên cho flashcard preview (lấy 20, random ở JS)
+    { data: sampleEntries },
+    { dailyGoal },
+  ] = await Promise.all([
+    supabase.from('review_log').select('*', { count: 'exact', head: true }).gte('reviewed_at', today),
+    supabase.from('review_log').select('reviewed_at').order('reviewed_at', { ascending: false }).limit(90),
+    supabase.from('entries').select('id, hanzi, pinyin, hv, meaning_vi').limit(20),
+    getSettings(),
+  ])
   const previewEntry = sampleEntries?.length
     ? sampleEntries[Math.floor(Math.random() * sampleEntries.length)]
     : null
+  return { reviewedToday, streak: computeStreak(reviewHistory), previewEntry, dailyGoal }
+}
 
-  // Badge neutral 1 kiểu cho mọi nguồn — tránh rainbow blue/green/purple lệch tông với theme đỏ/navy
-  const sourceCounts = [
-    { label: 'Douyin', count: cntDouyin ?? 0 },
-    { label: 'Nhạc',   count: cntMusic  ?? 0 },
-    { label: 'Game',   count: cntGame ?? 0 },
-    { label: 'Manual', count: cntManual ?? 0 },
-  ]
+async function getSongs() {
+  if (!FEATURES.lyrics) return []
+  const { data } = await supabase.from('songs').select('id, title, artist').order('created_at', { ascending: false }).limit(3)
+  return data ?? []
+}
 
-  return {
-    vocabCount, patternCount, reviewedToday, streak,
-    recentEntries, songs, previewEntry, sourceCounts,
-  }
+async function getDashboardData() {
+  const [lib, fc, songs] = await Promise.all([getLibraryData(), getFlashcardData(), getSongs()])
+  return { ...lib, ...fc, songs }
 }
 
 export default async function DashboardPage() {
-  const [dashData, { dailyGoal }] = await Promise.all([
-    getDashboardData(),
-    getSettings(),
-  ])
   const {
-    vocabCount, patternCount, reviewedToday, streak,
-    recentEntries, songs, previewEntry, sourceCounts,
-  } = dashData
-
-  const totalEntries = (vocabCount ?? 0) + (patternCount ?? 0)
+    vocabCount, patternCount, sentenceCount, recentEntries,
+    reviewedToday, streak, previewEntry, dailyGoal, songs,
+  } = await getDashboardData()
 
   return (
     <div>
@@ -114,55 +106,35 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stat cards — streak dùng accent=true để highlight bằng pink-soft */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        <StatCard label="Từ vựng"    value={vocabCount    ?? 0} sub="entries" />
-        <StatCard label="Cấu trúc"   value={patternCount  ?? 0} sub="patterns" />
-        <StatCard label="Ôn hôm nay" value={reviewedToday ?? 0} sub={`/ ${dailyGoal} mục tiêu`} />
-        <StatCard
-          label="Streak 🔥"
-          value={streak > 0 ? `${streak}` : '—'}
-          sub="ngày liên tiếp"
-          accent
-        />
+      {/* Stat cards — class viết đủ cả 2 biến thể để Tailwind không purge */}
+      <div className={`grid gap-3 mb-5 ${FEATURES.flashcard ? 'grid-cols-2 md:grid-cols-5' : 'grid-cols-3'}`}>
+        <StatCard label="Từ vựng"  value={vocabCount    ?? 0} sub="entries" />
+        <StatCard label="Cấu trúc" value={patternCount  ?? 0} sub="patterns" />
+        <StatCard label="Câu"      value={sentenceCount ?? 0} sub="sentences" />
+        {FEATURES.flashcard && (
+          <>
+            <StatCard label="Ôn hôm nay" value={reviewedToday ?? 0} sub={`/ ${dailyGoal} mục tiêu`} />
+            {/* streak dùng accent=true để highlight bằng pink-soft */}
+            <StatCard
+              label="Streak 🔥"
+              value={streak > 0 ? `${streak}` : '—'}
+              sub="ngày liên tiếp"
+              accent
+            />
+          </>
+        )}
       </div>
 
-      {/* Row 1 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <FlashcardPreview entry={previewEntry} reviewedToday={reviewedToday ?? 0} dailyGoal={dailyGoal} />
+      {/* Row 1 — không có flashcard thì "Mục mới thêm" giãn hết chiều ngang */}
+      <div className={`grid grid-cols-1 gap-4 mb-4 ${FEATURES.flashcard ? 'md:grid-cols-2' : ''}`}>
+        {FEATURES.flashcard && (
+          <FlashcardPreview entry={previewEntry} reviewedToday={reviewedToday ?? 0} dailyGoal={dailyGoal} />
+        )}
         <RecentEntries entries={recentEntries ?? []} />
       </div>
 
-      {/* Row 2 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SongsWidget songs={songs ?? []} />
-
-        {/* Source breakdown — real counts */}
-        <div className="card">
-          <p className="text-[14px] font-medium mb-4" style={{ color: 'var(--text-primary)' }}>
-            Nguồn học
-          </p>
-          <div className="flex flex-col gap-3">
-            {sourceCounts.map(({ label, count }) => {
-              const pct = totalEntries > 0 ? (count / totalEntries) * 100 : 0
-              return (
-                <div key={label}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="badge" style={{ background: 'var(--bg-muted)', color: 'var(--text-secondary)' }}>{label}</span>
-                    <span className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>
-                      {count}
-                    </span>
-                  </div>
-                  {/* Progress bar dùng CSS class từ globals.css */}
-                  <div className="progress-bar">
-                    <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
+      {/* Row 2 — Bài hát (full width; thẻ "Nguồn học" đã bỏ cùng cột source) */}
+      {FEATURES.lyrics && <SongsWidget songs={songs} />}
     </div>
   )
 }

@@ -6,7 +6,7 @@ import PatternList from '@/components/patterns/PatternList'
 export default async function PatternsPage() {
   const { data: patterns } = await supabase
     .from('entries')
-    .select('id, hanzi, pinyin, hv, meaning_vi, example, example_vi, examples, notes, source')
+    .select('id, hanzi, pinyin, hv, meaning_vi, example, example_vi, examples, notes')
     .eq('type', 'pattern')
     .order('created_at', { ascending: false })
 

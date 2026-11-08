@@ -8,7 +8,7 @@ import VocabList from '@/components/vocab/VocabList'
 async function getEntries() {
   const { data, error } = await supabase
     .from('entries')
-    .select('id, hanzi, pinyin, hv, meaning_vi, source, created_at, examples, notes')
+    .select('id, hanzi, pinyin, hv, meaning_vi, created_at, examples, notes')
     .eq('type', 'vocab')
     .order('created_at', { ascending: false })
 

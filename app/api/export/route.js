@@ -9,7 +9,7 @@ export async function GET(request) {
 
   const { data: entries, error } = await supabase
     .from('entries')
-    .select('type, hanzi, pinyin, hv, meaning_vi, meaning_en, notes, source, created_at')
+    .select('type, hanzi, pinyin, hv, meaning_vi, meaning_en, notes, created_at')
     .order('created_at')
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
@@ -24,7 +24,7 @@ export async function GET(request) {
   }
 
   // CSV
-  const headers = ['type', 'hanzi', 'pinyin', 'hv', 'meaning_vi', 'meaning_en', 'notes', 'source', 'created_at']
+  const headers = ['type', 'hanzi', 'pinyin', 'hv', 'meaning_vi', 'meaning_en', 'notes', 'created_at']
   const escape  = (v) => `"${(v ?? '').toString().replace(/"/g, '""')}"`
   const rows    = [
     headers.join(','),

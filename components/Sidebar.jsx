@@ -3,14 +3,16 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { IconCards, IconMusic, IconBook, IconLayers, IconChat, IconBarChart, IconSettings } from '@/components/ui/Icons'
+import { FEATURES } from '@/lib/features'
 
-// Nav config — thêm route mới ở đây, không cần sửa component
-const NAV = [
+// Nav config — thêm route mới ở đây, không cần sửa component.
+// `feature`: ẩn mục khi tính năng tắt trong lib/features.js; section rỗng bị ẩn luôn.
+const ALL_NAV = [
   {
     section: 'Học',
     items: [
-      { href: '/flashcard', label: 'Flashcard',  icon: IconCards },
-      { href: '/lyrics',    label: 'Lyrics',     icon: IconMusic },
+      { href: '/flashcard', label: 'Flashcard',  icon: IconCards, feature: 'flashcard' },
+      { href: '/lyrics',    label: 'Lyrics',     icon: IconMusic, feature: 'lyrics' },
     ],
   },
   {
@@ -24,11 +26,15 @@ const NAV = [
   {
     section: 'Khác',
     items: [
-      { href: '/stats',    label: 'Thống kê', icon: IconBarChart },
+      { href: '/stats',    label: 'Thống kê', icon: IconBarChart, feature: 'flashcard' },
       { href: '/settings', label: 'Cài đặt',  icon: IconSettings },
     ],
   },
 ]
+
+const NAV = ALL_NAV
+  .map(s => ({ ...s, items: s.items.filter(i => !i.feature || FEATURES[i.feature]) }))
+  .filter(s => s.items.length)
 
 export default function Sidebar() {
   const pathname = usePathname()
