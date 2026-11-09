@@ -114,3 +114,15 @@ export async function deleteEntry(id) {
   revalidatePath('/')           // dashboard: stat count + recent entries
   redirect('/vocab')
 }
+
+// ── Xoá entry ngay trong danh sách (Từ vựng / Cấu trúc) ─────────────────────
+// Khác deleteEntry: KHÔNG redirect, trả { error } thay vì throw -> danh sách tự xử lý.
+export async function removeEntry(id) {
+  const { error } = await supabase.from('entries').delete().eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/vocab')
+  revalidatePath('/patterns')
+  revalidatePath('/')           // dashboard: stat count + recent entries
+  return { ok: true }
+}

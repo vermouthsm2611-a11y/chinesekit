@@ -41,3 +41,13 @@ export async function deleteSentence(id) {
   revalidatePath('/sentences')
   redirect('/sentences')
 }
+
+// Xoá câu ngay trong danh sách — KHÔNG redirect, trả { error } thay vì throw
+export async function removeSentence(id) {
+  const { error } = await supabase.from('sentences').delete().eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/sentences')
+  revalidatePath('/')           // dashboard: số câu
+  return { ok: true }
+}

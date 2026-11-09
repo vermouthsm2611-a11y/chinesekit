@@ -3,6 +3,10 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import PinyinText from '@/components/ui/PinyinText'
+import DeleteIconButton from '@/components/ui/DeleteIconButton'
+import Toast from '@/components/ui/Toast'
+import useOptimisticDelete from '@/components/ui/useOptimisticDelete'
+import { removeEntry } from '@/app/actions/entries'
 
 const PAGE_SIZE = 50
 
@@ -40,7 +44,10 @@ function getFirstExample(entry) {
   return null
 }
 
-export default function VocabList({ entries }) {
+export default function VocabList({ entries: allEntries }) {
+  // Xoá ngay trong bảng: dòng ẩn tức thì, lỗi thì hiện lại (useOptimisticDelete)
+  const { removed, remove, error, clearError } = useOptimisticDelete(removeEntry)
+  const entries = useMemo(() => allEntries.filter(e => !removed.has(e.id)), [allEntries, removed])
   const [search,      setSearch]      = useState('')
   const [sort,        setSort]        = useState('newest')
   // shuffleSeed tăng mỗi lần click "Random" khi đã ở random → trigger re-shuffle
@@ -111,6 +118,7 @@ export default function VocabList({ entries }) {
 
   return (
     <div>
+      <Toast message={error} type="error" onClose={clearError} />
       {/* ── Toolbar sticky ────────────────────────────────────────────────── */}
       <div className="sticky top-0 z-10 pb-3 flex flex-col gap-2"
            style={{ background: 'var(--bg-base)' }}>
@@ -156,7 +164,7 @@ export default function VocabList({ entries }) {
           {/* MOBILE: card rows */}
           <div className="md:hidden card p-0 overflow-hidden divide-y divide-gray-50">
             {visible.map((entry) => (
-              <MobileRow key={entry.id} entry={entry} search={search} />
+              <MobileRow key={entry.id} entry={entry} search={search} onDelete={() => remove(entry.id)} />
             ))}
           </div>
 
@@ -173,7 +181,7 @@ export default function VocabList({ entries }) {
                     <th className="text-left px-4 py-2.5 font-medium w-[180px]">Ghi chú</th>
                     <th className="text-left px-4 py-2.5 font-medium w-[200px]">Ví dụ</th>
                     <th className="text-left px-4 py-2.5 font-medium">Pinyin / Dịch</th>
-                    <th className="px-4 py-2.5 w-[60px]" />
+                    <th className="px-4 py-2.5 w-[110px]" />
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -214,12 +222,15 @@ export default function VocabList({ entries }) {
                           )}
                         </td>
                         <td className="px-4 py-3 align-middle">
-                          <Link
-                            href={`/vocab/${entry.id}`}
-                            className="text-gray-400 hover:text-[var(--primary)] transition-colors"
-                          >
-                            Sửa →
-                          </Link>
+                          <div className="flex items-center gap-2 whitespace-nowrap">
+                            <Link
+                              href={`/vocab/${entry.id}`}
+                              className="text-gray-400 hover:text-[var(--primary)] transition-colors"
+                            >
+                              Sửa →
+                            </Link>
+                            <DeleteIconButton label={entry.hanzi} onDelete={() => remove(entry.id)} className="w-8 h-8" />
+                          </div>
                         </td>
                       </tr>
                     )
@@ -242,13 +253,15 @@ export default function VocabList({ entries }) {
 }
 
 // ── MobileRow ────────────────────────────────────────────────────────────────
-function MobileRow({ entry, search }) {
+// Nút xoá nằm CẠNH link (không lồng <button> trong <a>)
+function MobileRow({ entry, search, onDelete }) {
   const ex = getFirstExample(entry)
 
   return (
+    <div className="flex items-stretch">
     <Link
       href={`/vocab/${entry.id}`}
-      className="block px-4 py-3.5 hover:bg-gray-50 transition-colors active:bg-gray-100"
+      className="block flex-1 min-w-0 px-4 py-3.5 hover:bg-gray-50 transition-colors active:bg-gray-100"
     >
       <div className="flex items-baseline justify-between gap-2 mb-1">
         <span className="hanzi text-[22px] leading-tight text-gray-900">
@@ -275,6 +288,9 @@ function MobileRow({ entry, search }) {
         </div>
       )}
     </Link>
+    {/* w-11 = 44px: vùng chạm tối thiểu trên mobile */}
+    <DeleteIconButton label={entry.hanzi} onDelete={onDelete} className="w-11 flex-shrink-0 rounded-none" />
+    </div>
   )
 }
 

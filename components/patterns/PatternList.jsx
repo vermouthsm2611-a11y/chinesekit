@@ -3,10 +3,17 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import PinyinText from '@/components/ui/PinyinText'
+import DeleteIconButton from '@/components/ui/DeleteIconButton'
+import Toast from '@/components/ui/Toast'
+import useOptimisticDelete from '@/components/ui/useOptimisticDelete'
+import { removeEntry } from '@/app/actions/entries'
 
 const PAGE_SIZE = 30
 
-export default function PatternList({ patterns }) {
+export default function PatternList({ patterns: allPatterns }) {
+  // Xoá ngay trong danh sách: thẻ ẩn tức thì, lỗi thì hiện lại
+  const { removed, remove, error, clearError } = useOptimisticDelete(removeEntry)
+  const patterns = useMemo(() => allPatterns.filter(p => !removed.has(p.id)), [allPatterns, removed])
   const [search,       setSearch]       = useState('')
   const [expanded,     setExpanded]     = useState(null)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
@@ -65,6 +72,7 @@ export default function PatternList({ patterns }) {
 
   return (
     <div className="flex flex-col gap-3">
+      <Toast message={error} type="error" onClose={clearError} />
       {/* Sticky search bar */}
       <div className="sticky top-0 z-10 pb-2" style={{ background: 'var(--bg-base)' }}>
         <input
@@ -95,6 +103,7 @@ export default function PatternList({ patterns }) {
               pattern={p}
               isOpen={expanded === p.id}
               onToggle={() => setExpanded(expanded === p.id ? null : p.id)}
+              onDelete={() => remove(p.id)}
             />
           ))}
 
@@ -111,7 +120,8 @@ export default function PatternList({ patterns }) {
 }
 
 // ── PatternCard ────────────────────────────────────────────────────────────────
-function PatternCard({ pattern, isOpen, onToggle }) {
+// Xoá đặt cạnh "Sửa →" (ngoài nút toggle — không lồng <button> trong <button>)
+function PatternCard({ pattern, isOpen, onToggle, onDelete }) {
   const examples = pattern.examples?.length
     ? pattern.examples
     : pattern.example
@@ -201,7 +211,7 @@ function PatternCard({ pattern, isOpen, onToggle }) {
             </div>
           )}
 
-          <div className="flex justify-end">
+          <div className="flex justify-end items-center gap-2">
             <Link href={`/vocab/${pattern.id}?back=/patterns`}
               className="text-sm transition-colors"
               style={{ color: 'var(--text-muted)' }}
@@ -210,12 +220,13 @@ function PatternCard({ pattern, isOpen, onToggle }) {
             >
               ✏️ Sửa →
             </Link>
+            <DeleteIconButton label={pattern.hanzi} onDelete={onDelete} className="w-8 h-8" />
           </div>
         </div>
       )}
 
       {!hasMore && (
-        <div className="px-5 pb-3 flex justify-end">
+        <div className="px-5 pb-3 flex justify-end items-center gap-2">
           <Link href={`/vocab/${pattern.id}?back=/patterns`}
             className="text-sm transition-colors"
             style={{ color: 'var(--text-muted)' }}
@@ -224,6 +235,7 @@ function PatternCard({ pattern, isOpen, onToggle }) {
           >
             ✏️ Sửa →
           </Link>
+          <DeleteIconButton label={pattern.hanzi} onDelete={onDelete} className="w-8 h-8" />
         </div>
       )}
     </div>

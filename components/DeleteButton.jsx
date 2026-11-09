@@ -1,25 +1,46 @@
 'use client'
 
-// DeleteButton — Client Component xử lý confirm dialog trước khi submit
-// Dùng được cho cả vocab và lyrics
+// DeleteButton — nút "🗑 Xoá" trong trang Sửa (vocab / câu / lyrics), xác nhận bằng ConfirmDialog
 // Props:
-//   action      — Server Action (đã bind id)
-//   label       — tên item để hiện trong confirm (ví dụ: "后悔")
-//   confirmText — tuỳ chỉnh message confirm (optional)
+//   action      — Server Action (đã bind id), tự redirect sau khi xoá
+//   label       — tên item để hiện trong popup (ví dụ: "后悔")
+//   confirmText — tuỳ chỉnh nội dung popup (optional)
+import { useState } from 'react'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
+
 export default function DeleteButton({ action, label, confirmText }) {
-  const message = confirmText ?? `Xoá "${label}"?`
+  const [open,     setOpen]     = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleConfirm() {
+    setOpen(false)
+    setDeleting(true)
+    try {
+      await action()            // action redirect -> trang tự chuyển
+    } catch (e) {
+      // redirect() của Next không đi vào đây; chỉ lỗi thật (action throw) mới tới
+      setDeleting(false)
+      throw e
+    }
+  }
 
   return (
-    <form action={action}>
+    <>
       <button
-        type="submit"
-        className="btn text-red-500 border-red-200 hover:bg-red-50"
-        onClick={(e) => {
-          if (!confirm(message)) e.preventDefault()
-        }}
+        type="button"
+        disabled={deleting}
+        className="btn text-red-500 border-red-200 hover:bg-red-50 disabled:opacity-60"
+        onClick={() => setOpen(true)}
       >
-        🗑 Xoá
+        {deleting ? 'Đang xoá...' : '🗑 Xoá'}
       </button>
-    </form>
+      <ConfirmDialog
+        open={open}
+        title="Xoá mục này?"
+        message={confirmText ?? <>Xoá <span className="hanzi text-[18px]" style={{ color: 'var(--text-primary)' }}>{label}</span>? Không thể hoàn tác.</>}
+        onCancel={() => setOpen(false)}
+        onConfirm={handleConfirm}
+      />
+    </>
   )
 }

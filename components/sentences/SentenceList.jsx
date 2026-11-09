@@ -3,6 +3,10 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import PinyinText from '@/components/ui/PinyinText'
+import DeleteIconButton from '@/components/ui/DeleteIconButton'
+import Toast from '@/components/ui/Toast'
+import useOptimisticDelete from '@/components/ui/useOptimisticDelete'
+import { removeSentence } from '@/app/actions/sentences'
 
 function highlight(text, query) {
   if (!text || !query) return text
@@ -19,8 +23,11 @@ function highlight(text, query) {
   )
 }
 
-export default function SentenceList({ sentences }) {
+export default function SentenceList({ sentences: allSentences }) {
   const [search, setSearch] = useState('')
+  // Xoá ngay trong danh sách: dòng ẩn tức thì, lỗi thì hiện lại
+  const { removed, remove, error, clearError } = useOptimisticDelete(removeSentence)
+  const sentences = useMemo(() => allSentences.filter(s => !removed.has(s.id)), [allSentences, removed])
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
@@ -34,6 +41,7 @@ export default function SentenceList({ sentences }) {
 
   return (
     <div>
+      <Toast message={error} type="error" onClose={clearError} />
       <div className="sticky top-0 z-10 pb-3" style={{ background: 'var(--bg-base)' }}>
         <input
           type="search"
@@ -55,10 +63,11 @@ export default function SentenceList({ sentences }) {
       ) : (
         <div className="card p-0 overflow-hidden divide-y" style={{ borderColor: 'var(--border)' }}>
           {filtered.map(s => (
+            // Nút xoá nằm CẠNH link (không lồng <button> trong <a>)
+            <div key={s.id} className="flex items-stretch">
             <Link
-              key={s.id}
               href={`/sentences/${s.id}`}
-              className="group block px-5 py-3.5 transition-colors hover:bg-gray-50"
+              className="group block flex-1 min-w-0 px-5 py-3.5 transition-colors hover:bg-gray-50"
             >
               {/* Desktop: 3 cột — hanzi | pinyin | dịch */}
               <div className="hidden md:grid md:grid-cols-[1fr_1fr_1fr] md:items-center gap-x-6">
@@ -95,6 +104,9 @@ export default function SentenceList({ sentences }) {
                 )}
               </div>
             </Link>
+            {/* w-11 = 44px: đủ vùng chạm trên mobile */}
+            <DeleteIconButton label={s.hanzi.slice(0, 20)} onDelete={() => remove(s.id)} className="w-11 flex-shrink-0 rounded-none" />
+            </div>
           ))}
         </div>
       )}
